@@ -1,81 +1,67 @@
-// === CONFIGURATION ===
-const API_URL = "https://brendas-birthday.onrender.com"; // <-- replace with your Render backend link
+// === Brenda's Birthday App - Frontend Script ===
 
-// === ELEMENTS ===
+// 🌍 Backend API URL
+const API_URL = "https://brendas-birthday.onrender.com/messages";
+
+// === Select HTML Elements ===
 const messageInput = document.getElementById("messageInput");
-const addButton = document.getElementById("addMessageBtn");
+const sendBtn = document.getElementById("sendBtn");
 const messageList = document.getElementById("messageList");
-const surpriseBtn = document.getElementById("surpriseBtn");
 
-// === ANIMATED GREETING ===
-const greeting = document.getElementById("greeting");
-let titleText = greeting.textContent;
-greeting.textContent = "";
-let i = 0;
-function typeEffect() {
-  if (i < titleText.length) {
-    greeting.textContent += titleText.charAt(i);
-    i++;
-    setTimeout(typeEffect, 100);
-  } else {
-    greeting.classList.add("shine");
-  }
-}
-window.addEventListener("load", typeEffect);
-
-// === LOAD MESSAGES ===
+// === Load All Messages from Server ===
 async function loadMessages() {
-  messageList.innerHTML = "<p class='loading'>Loading messages...</p>";
   try {
-    const res = await fetch(`${API_URL}/messages`);
-    const data = await res.json();
+    const response = await fetch(API_URL);
+    const messages = await response.json();
 
-    if (data.length === 0) {
-      messageList.innerHTML = "<p class='no-msg'>No messages yet. Be the first! 💌</p>";
-    } else {
-      messageList.innerHTML = "";
-      data.forEach((msg) => {
-        const card = document.createElement("div");
-        card.className = "message-card";
-        card.innerHTML = `
-          <p>${msg.text}</p>
-          <span>${new Date(msg.date).toLocaleString()}</span>
-        `;
-        messageList.appendChild(card);
-      });
-    }
-  } catch (err) {
-    messageList.innerHTML = "<p class='error'>Could not load messages 💔</p>";
-    console.error(err);
+    // Clear the list first
+    messageList.innerHTML = "";
+
+    // Add each message to the list
+    messages.forEach((msg) => {
+      const li = document.createElement("li");
+      li.classList.add("message-item");
+      li.textContent = msg;
+      messageList.appendChild(li);
+    });
+  } catch (error) {
+    console.error("⚠️ Error loading messages:", error);
+    messageList.innerHTML = `<p style="color: #ff6b6b;">⚠️ Failed to load messages. Please try again later.</p>`;
   }
 }
 
-// === ADD NEW MESSAGE ===
-async function addMessage() {
-  const text = messageInput.value.trim();
-  if (!text) return alert("Please write a message first 💕");
+// === Send a New Message to the Server ===
+async function sendMessage() {
+  const message = messageInput.value.trim();
+  if (!message) return; // ignore empty messages
 
-  await fetch(`${API_URL}/messages`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: text })
-  });
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message }),
+    });
 
-  messageInput.value = "";
-  loadMessages();
+    const result = await response.json();
+    if (result.success) {
+      messageInput.value = ""; // clear input
+      await loadMessages(); // reload messages
+    } else {
+      alert("❌ Failed to send message.");
+    }
+  } catch (error) {
+    console.error("⚠️ Error sending message:", error);
+    alert("⚠️ Could not send your message. Try again later.");
+  }
 }
 
-// === SURPRISE BUTTON ===
-if (surpriseBtn) {
-  surpriseBtn.addEventListener("click", () => {
-    const confetti = document.createElement("div");
-    confetti.classList.add("confetti");
-    document.body.appendChild(confetti);
-    setTimeout(() => confetti.remove(), 3000);
-    alert("🎉 Surprise! Brenda, you’re loved more than words can say 💖");
-  });
-}
-
-// === EVENT LISTENERS ===
-addButton.addEventListener("click", addMessage);
+// === Event Listeners ===
+sendBtn.addEventListener("click", sendMessage);
 window.addEventListener("load", loadMessages);
+
+// === Optional: Press Enter to Send ===
+messageInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") sendMessage();
+});
