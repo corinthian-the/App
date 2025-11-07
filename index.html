@@ -1,29 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Brenda's App 💖</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
-  <div class="container">
-    <h1>🎉 Happy Birthday, Brenda! 🎂</h1>
-    <p class="message">You make the world brighter just by being in it 💕</p>
+  <!-- Floating Balloons -->
+  <div class="balloon"></div>
+  <div class="balloon"></div>
+  <div class="balloon"></div>
 
-    <button id="revealBtn">Click for a Surprise 🎁</button>
+  <!-- Greeting -->
+  <h1 id="greeting">🎉 Happy Birthday Brenda 💖</h1>
 
-    <div id="surprise" class="hidden">
-      <p id="randomMessage">Loading...</p>
-    </div>
+  <!-- Message Section -->
+  <div id="app">
+    <input id="messageInput" type="text" placeholder="Write a sweet message..." />
+    <button id="addMessageBtn">💌 Send Message</button>
+    <button id="surpriseBtn">🎁 Surprise!</button>
 
-    <form id="messageForm">
-      <input type="text" id="newMessage" placeholder="Add a new message for Brenda">
-      <button type="submit">💌 Add Message</button>
-    </form>
+    <div id="messageList" class="messages"></div>
+    <div id="status" class="no-msg">Loading messages...</div>
   </div>
 
-  <canvas id="confetti"></canvas>
-  <script src="script.js"></script>
+  <!-- Confetti container (hidden until surprise button pressed) -->
+  <div id="confetti" class="confetti" style="display: none;"></div>
+
+  <script>
+    const messageInput = document.getElementById("messageInput");
+    const addMessageBtn = document.getElementById("addMessageBtn");
+    const surpriseBtn = document.getElementById("surpriseBtn");
+    const messageList = document.getElementById("messageList");
+    const confetti = document.getElementById("confetti");
+    const status = document.getElementById("status");
+
+    const API_URL = "http://localhost:3000"; // your Express backend
+
+    // Fetch messages
+    async function loadMessages() {
+      status.textContent = "Loading messages...";
+      try {
+        const res = await fetch(`${API_URL}/messages`);
+        const messages = await res.json();
+        displayMessages(messages);
+      } catch (err) {
+        console.error("Error fetching:", err);
+        status.textContent = "⚠️ Failed to load messages.";
+      }
+    }
+
+    // Display messages in styled cards
+    function displayMessages(messages) {
+      messageList.innerHTML = "";
+      if (messages.length === 0) {
+        status.textContent = "💭 No messages yet. Be the first to send one!";
+        return;
+      }
+      status.textContent = "";
+      messages.forEach(msg => {
+        const card = document.createElement("div");
+        card.className = "message-card";
+        card.innerHTML = `<p>${msg}</p><span>💖 from Brenda's admirer</span>`;
+        messageList.appendChild(card);
+      });
+    }
+
+    // Send message
+    addMessageBtn.addEventListener("click", async () => {
+      const message = messageInput.value.trim();
+      if (!message) return alert("Type a message first!");
+      await fetch(`${API_URL}/messages`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message })
+      });
+      messageInput.value = "";
+      loadMessages();
+    });
+
+    // Surprise button: show confetti + glowing animation
+    surpriseBtn.addEventListener("click", () => {
+      confetti.style.display = "block";
+      setTimeout(() => confetti.style.display = "none", 5000);
+      document.getElementById("greeting").style.animation = "glow 1s infinite alternate";
+    });
+
+    // Initial load
+    loadMessages();
+  </script>
 </body>
 </html>
