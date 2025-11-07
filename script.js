@@ -1,3 +1,17 @@
+// === Animate the "Happy Birthday Brenda" text ===
+const animatedTitle = document.getElementById("animatedTitle");
+const titleText = "💖 Happy Birthday Brenda 💖";
+
+let i = 0;
+function typeTitle() {
+  if (i < titleText.length) {
+    animatedTitle.textContent += titleText.charAt(i);
+    i++;
+    setTimeout(typeTitle, 120);
+  }
+}
+window.onload = typeTitle;
+
 // === Brenda's Birthday App - Frontend Script ===
 
 // 🌍 Backend API URL
