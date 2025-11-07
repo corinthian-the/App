@@ -3,92 +3,97 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Brenda's App 💖</title>
+  <title>Brenda's Birthday 💖</title>
   <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
-  <!-- Floating Balloons -->
-  <div class="balloon"></div>
-  <div class="balloon"></div>
-  <div class="balloon"></div>
-
-  <!-- Greeting -->
-  <h1 id="greeting">🎉 Happy Birthday Brenda 💖</h1>
-
-  <!-- Message Section -->
-  <div id="app">
-    <input id="messageInput" type="text" placeholder="Write a sweet message..." />
-    <button id="addMessageBtn">💌 Send Message</button>
-    <button id="surpriseBtn">🎁 Surprise!</button>
-
-    <div id="messageList" class="messages"></div>
-    <div id="status" class="no-msg">Loading messages...</div>
+  <div class="title-container">
+    <h1 id="animatedTitle"></h1>
   </div>
 
-  <!-- Confetti container (hidden until surprise button pressed) -->
-  <div id="confetti" class="confetti" style="display: none;"></div>
+  <div id="messages"></div>
+
+  <div class="input-area">
+    <input type="text" id="messageInput" placeholder="Write a sweet message for Brenda..." />
+    <button id="sendButton">💌 Send</button>
+  </div>
+
+  <p id="error">⚠️ Failed to send message. Try again later.</p>
+
+  <footer>Made with 💖 for Brenda’s Birthday</footer>
 
   <script>
+    // === Animate the "Happy Birthday Brenda" text ===
+    const animatedTitle = document.getElementById("animatedTitle");
+    const titleText = "💖 Happy Birthday Brenda 💖";
+    let i = 0;
+    function typeTitle() {
+      if (i < titleText.length) {
+        animatedTitle.textContent += titleText.charAt(i);
+        i++;
+        setTimeout(typeTitle, 120);
+      }
+    }
+    window.onload = typeTitle;
+
+    // === Messaging Logic ===
+    const messagesDiv = document.getElementById("messages");
+    const sendButton = document.getElementById("sendButton");
     const messageInput = document.getElementById("messageInput");
-    const addMessageBtn = document.getElementById("addMessageBtn");
-    const surpriseBtn = document.getElementById("surpriseBtn");
-    const messageList = document.getElementById("messageList");
-    const confetti = document.getElementById("confetti");
-    const status = document.getElementById("status");
+    const errorText = document.getElementById("error");
 
-    const API_URL = "http://localhost:3000"; // your Express backend
+    const API_URL = "https://brendas-birthday.onrender.com";
 
-    // Fetch messages
+    // Load existing messages
     async function loadMessages() {
-      status.textContent = "Loading messages...";
       try {
         const res = await fetch(`${API_URL}/messages`);
+        if (!res.ok) throw new Error("Failed to fetch messages");
         const messages = await res.json();
-        displayMessages(messages);
+        messagesDiv.innerHTML = "";
+        messages.forEach((msg) => {
+          const msgDiv = document.createElement("div");
+          msgDiv.classList.add("message");
+          msgDiv.innerHTML = `<p>${msg.text}</p><small>${new Date(
+            msg.timestamp
+          ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</small>`;
+          messagesDiv.appendChild(msgDiv);
+        });
       } catch (err) {
-        console.error("Error fetching:", err);
-        status.textContent = "⚠️ Failed to load messages.";
+        console.error(err);
       }
     }
 
-    // Display messages in styled cards
-    function displayMessages(messages) {
-      messageList.innerHTML = "";
-      if (messages.length === 0) {
-        status.textContent = "💭 No messages yet. Be the first to send one!";
-        return;
-      }
-      status.textContent = "";
-      messages.forEach(msg => {
-        const card = document.createElement("div");
-        card.className = "message-card";
-        card.innerHTML = `<p>${msg}</p><span>💖 from Brenda's admirer</span>`;
-        messageList.appendChild(card);
-      });
-    }
-
-    // Send message
-    addMessageBtn.addEventListener("click", async () => {
+    // Send new message
+    async function sendMessage() {
       const message = messageInput.value.trim();
-      if (!message) return alert("Type a message first!");
-      await fetch(`${API_URL}/messages`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message })
-      });
-      messageInput.value = "";
-      loadMessages();
+      if (!message) return;
+
+      try {
+        const res = await fetch(`${API_URL}/messages`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          messageInput.value = "";
+          errorText.style.display = "none";
+          loadMessages();
+        } else {
+          errorText.style.display = "block";
+        }
+      } catch (err) {
+        errorText.style.display = "block";
+        console.error("Error sending message:", err);
+      }
+    }
+
+    sendButton.addEventListener("click", sendMessage);
+    messageInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") sendMessage();
     });
 
-    // Surprise button: show confetti + glowing animation
-    surpriseBtn.addEventListener("click", () => {
-      confetti.style.display = "block";
-      setTimeout(() => confetti.style.display = "none", 5000);
-      document.getElementById("greeting").style.animation = "glow 1s infinite alternate";
-    });
-
-    // Initial load
     loadMessages();
   </script>
 </body>
