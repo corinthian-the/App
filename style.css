@@ -1,106 +1,194 @@
-/* === LUXURIOUS DUOTONE THEME === */
-body {
+/* === GLOBAL STYLES === */
+* {
   margin: 0;
   padding: 0;
-  height: 100vh;
-  background: linear-gradient(135deg, #8e2de2, #ffb347);
-  background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
-  font-family: "Poppins", sans-serif;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #b76e79, #4b0082);
+  color: #fff;
+  overflow-x: hidden;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  text-align: center;
-  overflow: hidden;
+  justify-content: flex-start;
+  min-height: 100vh;
+  padding: 40px 20px;
 }
 
-/* Animate background gradient */
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.container {
-  position: relative;
-  z-index: 10;
-  padding: 20px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 0 40px rgba(255, 255, 255, 0.2);
-}
-
-/* === DUOTONE ANIMATED TITLE === */
-h1 {
-  font-size: 3em;
+/* === HEADER / GREETING === */
+#greeting {
+  font-size: 3rem;
   font-weight: 700;
-  background: linear-gradient(90deg, #ffd700, #ff9a9e, #ffd700);
-  background-size: 300%;
+  text-align: center;
+  background: linear-gradient(90deg, #ffd1dc, #d6a4ff, #ffb3c6);
+  background-size: 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: textGlow 6s linear infinite;
-  text-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-}
-
-@keyframes textGlow {
-  0% { background-position: 0%; }
-  50% { background-position: 100%; }
-  100% { background-position: 0%; }
-}
-
-/* === MESSAGE TEXT === */
-.message {
-  color: #fff5ee;
-  font-size: 1.3em;
+  animation: glow 3s infinite linear, shineMove 4s infinite linear;
   margin-bottom: 25px;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
-/* === BUTTONS === */
-button {
-  background: linear-gradient(90deg, #ff6f91, #ff9671);
+@keyframes glow {
+  0%, 100% { text-shadow: 0 0 15px #ffb3c6, 0 0 25px #d6a4ff; }
+  50% { text-shadow: 0 0 30px #ff99cc, 0 0 40px #b76e79; }
+}
+
+@keyframes shineMove {
+  0% { background-position: 0%; }
+  100% { background-position: 200%; }
+}
+
+/* === INPUT AREA === */
+#messageInput {
+  width: 90%;
+  max-width: 400px;
+  padding: 12px;
   border: none;
-  color: white;
-  padding: 12px 24px;
-  border-radius: 25px;
-  font-size: 1em;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
-  box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
-}
-
-button:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 20px rgba(255, 182, 193, 0.6);
-}
-
-/* === INPUT FIELD === */
-input {
-  margin-top: 30px;
-  padding: 10px;
-  border-radius: 20px;
-  border: none;
-  width: 60%;
-  max-width: 260px;
-  text-align: center;
-  background: rgba(255,255,255,0.9);
+  border-radius: 12px;
+  outline: none;
+  font-size: 1rem;
   color: #333;
-  font-weight: 500;
+  margin-bottom: 10px;
 }
 
-/* === SURPRISE TEXT === */
-#surprise {
+#addMessageBtn {
+  background: linear-gradient(135deg, #ffd1dc, #d6a4ff);
+  color: #4b0082;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+
+#addMessageBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(255, 209, 220, 0.6);
+}
+
+/* === SURPRISE BUTTON === */
+#surpriseBtn {
+  margin-top: 15px;
+  background: linear-gradient(135deg, #ffb3c6, #b76e79);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 30px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+#surpriseBtn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 179, 198, 0.8);
+}
+
+/* === MESSAGE LIST === */
+#messageList {
   margin-top: 25px;
-  font-size: 1.5em;
-  color: #fffbea;
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 10px;
 }
 
-/* === CONFETTI CANVAS === */
-canvas#confetti {
+.message-card {
+  width: 100%;
+  background: linear-gradient(135deg, #ffe6f3, #f9f7ff);
+  border-radius: 16px;
+  padding: 14px 18px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.6s ease;
+  color: #333;
+  transition: transform 0.2s;
+}
+
+.message-card:hover {
+  transform: translateY(-3px);
+}
+
+.message-card p {
+  font-size: 1.1rem;
+  color: #222;
+}
+
+.message-card span {
+  font-size: 0.8rem;
+  color: #777;
+  display: block;
+  margin-top: 6px;
+}
+
+/* === STATES === */
+.loading, .no-msg, .error {
+  color: #ffd1dc;
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+/* === CONFETTI === */
+.confetti {
   position: fixed;
-  top: 0;
-  left: 0;
+  width: 100vw;
+  height: 100vh;
   pointer-events: none;
-  z-index: 1;
+  background: url('https://i.imgur.com/6ZkJ0Ew.gif') center/cover no-repeat;
+  z-index: 999;
+  animation: fadeIn 1s ease;
+}
+
+/* === BALLOONS FLOATING === */
+.balloon {
+  position: absolute;
+  width: 60px;
+  height: 80px;
+  background: radial-gradient(circle at 30% 30%, #ffd1dc, #d6a4ff);
+  border-radius: 50% 50% 45% 45%;
+  animation: floatUp 10s infinite ease-in-out;
+  opacity: 0.8;
+}
+
+.balloon:nth-child(2) {
+  left: 20%;
+  animation-delay: 2s;
+  background: radial-gradient(circle at 30% 30%, #ffb3c6, #b76e79);
+}
+
+.balloon:nth-child(3) {
+  left: 60%;
+  animation-delay: 4s;
+  background: radial-gradient(circle at 30% 30%, #f9f7ff, #d6a4ff);
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(100vh) scale(1); }
+  50% { transform: translateY(50vh) scale(1.1); }
+  100% { transform: translateY(-10vh) scale(1); }
+}
+
+/* === ANIMATIONS === */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* === SCROLLBAR === */
+#messageList::-webkit-scrollbar {
+  width: 8px;
+}
+#messageList::-webkit-scrollbar-thumb {
+  background: #d6a4ff;
+  border-radius: 10px;
 }
