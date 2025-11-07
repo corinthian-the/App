@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Test – Brenda's App</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f9e7fe, #ffe6f7);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+    h1 {
+      color: #7b2cbf;
+    }
+    pre {
+      background: #fff;
+      padding: 1em;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      max-width: 90%;
+      overflow-x: auto;
+    }
+    button {
+      background: #7b2cbf;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #9d4edd;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧠 Testing Brenda’s API</h1>
+  <button onclick="testAPI()">Check Connection</button>
+  <pre id="output">Waiting to test...</pre>
+
+  <script>
+    const API_URL = "https://brendas-birthday.onrender.com";
+
+    async function testAPI() {
+      const output = document.getElementById('output');
+      output.textContent = "Checking API...\n";
+
+      try {
+        const res = await fetch(`${API_URL}/messages`);
+        if (!res.ok) throw new Error("HTTP error " + res.status);
+        const data = await res.json();
+        output.textContent = "✅ Connection successful!\n\nResponse:\n" + JSON.stringify(data, null, 2);
+      } catch (err) {
+        output.textContent = "❌ Connection failed:\n" + err + "\n\n(If you see a CORS error, we’ll fix that next.)";
+      }
+    }
+  </script>
+</body>
+</html>
