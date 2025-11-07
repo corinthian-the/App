@@ -1,194 +1,164 @@
-/* === GLOBAL STYLES === */
+/* === Global Reset === */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
+/* === Background === */
 body {
-  background: linear-gradient(135deg, #b76e79, #4b0082);
-  color: #fff;
-  overflow-x: hidden;
+  background: linear-gradient(135deg, #6a11cb, #ff6ec4);
+  background-size: 200% 200%;
+  animation: gradientShift 10s ease infinite;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  min-height: 100vh;
-  padding: 40px 20px;
+  color: #fff;
+  overflow-x: hidden;
 }
 
-/* === HEADER / GREETING === */
-#greeting {
-  font-size: 3rem;
-  font-weight: 700;
-  text-align: center;
-  background: linear-gradient(90deg, #ffd1dc, #d6a4ff, #ffb3c6);
-  background-size: 200%;
+/* === Animated Duotone Background Shift === */
+@keyframes gradientShift {
+  0% {
+    background-position: left top;
+  }
+  50% {
+    background-position: right bottom;
+  }
+  100% {
+    background-position: left top;
+  }
+}
+
+/* === Title (Happy Birthday Brenda) === */
+h1 {
+  font-size: 3.5em;
+  margin-top: 60px;
+  background: linear-gradient(90deg, #fff, #ffe8f3, #ff9ecf);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: glow 3s infinite linear, shineMove 4s infinite linear;
-  margin-bottom: 25px;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+  animation: glowText 2.5s ease-in-out infinite alternate;
 }
 
-@keyframes glow {
-  0%, 100% { text-shadow: 0 0 15px #ffb3c6, 0 0 25px #d6a4ff; }
-  50% { text-shadow: 0 0 30px #ff99cc, 0 0 40px #b76e79; }
+@keyframes glowText {
+  from {
+    text-shadow: 0 0 10px #ffe8f3, 0 0 20px #ff8fb1;
+  }
+  to {
+    text-shadow: 0 0 25px #fff, 0 0 45px #ffb8e2;
+  }
 }
 
-@keyframes shineMove {
-  0% { background-position: 0%; }
-  100% { background-position: 200%; }
-}
-
-/* === INPUT AREA === */
-#messageInput {
+/* === Message Container === */
+#messages {
   width: 90%;
-  max-width: 400px;
+  max-width: 600px;
+  margin-top: 40px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  overflow-y: auto;
+  max-height: 400px;
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+}
+
+/* === Individual Message Bubbles === */
+.message {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 15px;
+  margin-bottom: 10px;
+  width: fit-content;
+  animation: fadeIn 0.4s ease;
+  backdrop-filter: blur(4px);
+}
+
+.message:nth-child(even) {
+  background: rgba(255, 255, 255, 0.25);
+  align-self: flex-end;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Message Input Area === */
+#messageInput {
+  width: 70%;
   padding: 12px;
   border: none;
-  border-radius: 12px;
+  border-radius: 30px;
   outline: none;
-  font-size: 1rem;
-  color: #333;
-  margin-bottom: 10px;
-}
-
-#addMessageBtn {
-  background: linear-gradient(135deg, #ffd1dc, #d6a4ff);
-  color: #4b0082;
-  border: none;
-  border-radius: 12px;
-  padding: 12px 24px;
-  font-size: 1rem;
-  cursor: pointer;
-  font-weight: 600;
-  transition: transform 0.2s, box-shadow 0.3s;
-}
-
-#addMessageBtn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 15px rgba(255, 209, 220, 0.6);
-}
-
-/* === SURPRISE BUTTON === */
-#surpriseBtn {
-  margin-top: 15px;
-  background: linear-gradient(135deg, #ffb3c6, #b76e79);
-  color: #fff;
-  border: none;
-  border-radius: 12px;
-  padding: 12px 30px;
-  font-size: 1rem;
-  cursor: pointer;
-  font-weight: 600;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-#surpriseBtn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 15px rgba(255, 179, 198, 0.8);
-}
-
-/* === MESSAGE LIST === */
-#messageList {
+  font-size: 1em;
   margin-top: 25px;
-  width: 100%;
-  max-width: 600px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  max-height: 400px;
-  overflow-y: auto;
-  padding-right: 10px;
+  background: rgba(255, 255, 255, 0.85);
+  color: #444;
+  transition: all 0.3s ease;
 }
 
-.message-card {
-  width: 100%;
-  background: linear-gradient(135deg, #ffe6f3, #f9f7ff);
-  border-radius: 16px;
-  padding: 14px 18px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-  animation: fadeIn 0.6s ease;
-  color: #333;
-  transition: transform 0.2s;
+#messageInput:focus {
+  box-shadow: 0 0 10px rgba(255, 182, 220, 0.8);
 }
 
-.message-card:hover {
-  transform: translateY(-3px);
+/* === Send Button === */
+#sendButton {
+  margin-left: 10px;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #ff66b2, #7a00ff);
+  color: #fff;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(255, 105, 180, 0.4);
 }
 
-.message-card p {
-  font-size: 1.1rem;
-  color: #222;
+#sendButton:hover {
+  background: linear-gradient(135deg, #ff85c1, #8e2de2);
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(255, 182, 220, 0.6);
 }
 
-.message-card span {
-  font-size: 0.8rem;
-  color: #777;
-  display: block;
-  margin-top: 6px;
-}
-
-/* === STATES === */
-.loading, .no-msg, .error {
-  color: #ffd1dc;
-  font-size: 1rem;
+/* === Error Message === */
+#error {
+  color: #ffdddd;
   margin-top: 10px;
+  font-size: 0.9em;
+  display: none;
 }
 
-/* === CONFETTI === */
-.confetti {
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  background: url('https://i.imgur.com/6ZkJ0Ew.gif') center/cover no-repeat;
-  z-index: 999;
-  animation: fadeIn 1s ease;
-}
-
-/* === BALLOONS FLOATING === */
-.balloon {
-  position: absolute;
-  width: 60px;
-  height: 80px;
-  background: radial-gradient(circle at 30% 30%, #ffd1dc, #d6a4ff);
-  border-radius: 50% 50% 45% 45%;
-  animation: floatUp 10s infinite ease-in-out;
-  opacity: 0.8;
-}
-
-.balloon:nth-child(2) {
-  left: 20%;
-  animation-delay: 2s;
-  background: radial-gradient(circle at 30% 30%, #ffb3c6, #b76e79);
-}
-
-.balloon:nth-child(3) {
-  left: 60%;
-  animation-delay: 4s;
-  background: radial-gradient(circle at 30% 30%, #f9f7ff, #d6a4ff);
-}
-
-@keyframes floatUp {
-  0% { transform: translateY(100vh) scale(1); }
-  50% { transform: translateY(50vh) scale(1.1); }
-  100% { transform: translateY(-10vh) scale(1); }
-}
-
-/* === ANIMATIONS === */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* === SCROLLBAR === */
-#messageList::-webkit-scrollbar {
+/* === Scrollbar Style === */
+#messages::-webkit-scrollbar {
   width: 8px;
 }
-#messageList::-webkit-scrollbar-thumb {
-  background: #d6a4ff;
+
+#messages::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
   border-radius: 10px;
+}
+
+#messages::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+/* === Footer or Small Note === */
+footer {
+  margin-top: 40px;
+  font-size: 0.9em;
+  opacity: 0.7;
+  text-align: center;
 }
