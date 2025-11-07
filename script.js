@@ -1,60 +1,81 @@
-const surpriseDiv = document.getElementById("surprise");
-const randomMessage = document.getElementById("randomMessage");
-const revealBtn = document.getElementById("revealBtn");
-const form = document.getElementById("messageForm");
-const newMessageInput = document.getElementById("newMessage");
+// === CONFIGURATION ===
+const API_URL = "https://brendas-birthday.onrender.com"; // <-- replace with your Render backend link
 
-revealBtn.addEventListener("click", async () => {
-  surpriseDiv.classList.remove("hidden");
-  const res = await fetch("http://localhost:3000/messages");
-  const messages = await res.json();
-  const random = messages[Math.floor(Math.random() * messages.length)];
-  randomMessage.textContent = random.text;
-  startConfetti();
-});
+// === ELEMENTS ===
+const messageInput = document.getElementById("messageInput");
+const addButton = document.getElementById("addMessageBtn");
+const messageList = document.getElementById("messageList");
+const surpriseBtn = document.getElementById("surpriseBtn");
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const newMsg = newMessageInput.value.trim();
-  if (!newMsg) return;
-  await fetch("http://localhost:3000/messages", {
+// === ANIMATED GREETING ===
+const greeting = document.getElementById("greeting");
+let titleText = greeting.textContent;
+greeting.textContent = "";
+let i = 0;
+function typeEffect() {
+  if (i < titleText.length) {
+    greeting.textContent += titleText.charAt(i);
+    i++;
+    setTimeout(typeEffect, 100);
+  } else {
+    greeting.classList.add("shine");
+  }
+}
+window.addEventListener("load", typeEffect);
+
+// === LOAD MESSAGES ===
+async function loadMessages() {
+  messageList.innerHTML = "<p class='loading'>Loading messages...</p>";
+  try {
+    const res = await fetch(`${API_URL}/messages`);
+    const data = await res.json();
+
+    if (data.length === 0) {
+      messageList.innerHTML = "<p class='no-msg'>No messages yet. Be the first! 💌</p>";
+    } else {
+      messageList.innerHTML = "";
+      data.forEach((msg) => {
+        const card = document.createElement("div");
+        card.className = "message-card";
+        card.innerHTML = `
+          <p>${msg.text}</p>
+          <span>${new Date(msg.date).toLocaleString()}</span>
+        `;
+        messageList.appendChild(card);
+      });
+    }
+  } catch (err) {
+    messageList.innerHTML = "<p class='error'>Could not load messages 💔</p>";
+    console.error(err);
+  }
+}
+
+// === ADD NEW MESSAGE ===
+async function addMessage() {
+  const text = messageInput.value.trim();
+  if (!text) return alert("Please write a message first 💕");
+
+  await fetch(`${API_URL}/messages`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: newMsg })
+    body: JSON.stringify({ message: text })
   });
-  newMessageInput.value = "";
-  alert("Message added for Brenda 💖");
-});
 
-function startConfetti() {
-  const canvas = document.getElementById("confetti");
-  const ctx = canvas.getContext("2d");
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  const confetti = Array.from({ length: 150 }, () => ({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height - canvas.height,
-    r: Math.random() * 4 + 1,
-    d: Math.random() * 0.5 + 0.5
-  }));
-
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#fff";
-    confetti.forEach(p => {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fill();
-    });
-    update();
-  }
-
-  function update() {
-    confetti.forEach(p => {
-      p.y += p.d * 5;
-      if (p.y > canvas.height) p.y = 0;
-    });
-  }
-
-  setInterval(draw, 30);
+  messageInput.value = "";
+  loadMessages();
 }
+
+// === SURPRISE BUTTON ===
+if (surpriseBtn) {
+  surpriseBtn.addEventListener("click", () => {
+    const confetti = document.createElement("div");
+    confetti.classList.add("confetti");
+    document.body.appendChild(confetti);
+    setTimeout(() => confetti.remove(), 3000);
+    alert("🎉 Surprise! Brenda, you’re loved more than words can say 💖");
+  });
+}
+
+// === EVENT LISTENERS ===
+addButton.addEventListener("click", addMessage);
+window.addEventListener("load", loadMessages);
