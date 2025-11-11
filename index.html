@@ -3,28 +3,139 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>App Messaging</title>
+  <title>Happy Birthday Brenda</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* === Duotone Background === */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #ffb6c1, #ff69b4);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      color: #fff;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* === Container === */
+    .container {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 30px 40px;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    /* === Happy Birthday Text === */
+    h1 {
+      font-size: 36px;
+      color: #fff;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 8px #ff69b4;
+      animation: floatText 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatText {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-10px); }
+    }
+
+    /* === Message Input & Buttons === */
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 12px;
+      border: none;
+      font-size: 16px;
+      outline: none;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    button {
+      background-color: #ff69b4;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 5px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    }
+
+    /* === Status Messages === */
+    .status {
+      font-size: 16px;
+      margin-top: 10px;
+      min-height: 24px;
+      color: #fff;
+    }
+
+    /* === Surprise Gift Button === */
+    #giftBtn {
+      background-color: #ff1493;
+    }
+
+    #giftBtn:hover {
+      transform: rotate(-10deg) scale(1.1);
+    }
+
+    /* === Messages List === */
+    #messagesList {
+      list-style: none;
+      padding: 0;
+      max-height: 150px;
+      overflow-y: auto;
+      margin-top: 15px;
+    }
+
+    #messagesList li {
+      background: rgba(255,255,255,0.2);
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      border-radius: 12px;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-    <h1>Send a Message</h1>
+    <h1>🎉 Happy Birthday Brenda! 🎉</h1>
 
-    <!-- Input field -->
+    <!-- Message Input -->
     <input type="text" id="messageInput" placeholder="Type your message">
 
-    <!-- Send button -->
-    <button id="sendBtn">Send</button>
+    <!-- Buttons -->
+    <button id="sendBtn">Send Message 💌</button>
+    <button id="giftBtn">🎁 Surprise Gift</button>
 
-    <!-- Status messages -->
+    <!-- Status -->
     <div id="status" class="status"></div>
 
-    <!-- Area to display all messages -->
-    <h2>Messages:</h2>
+    <!-- Messages List -->
     <ul id="messagesList"></ul>
   </div>
 
-  <!-- Front-end script -->
+  <!-- Script -->
   <script src="script.js"></script>
 </body>
 </html>
