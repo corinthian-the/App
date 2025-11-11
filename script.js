@@ -1,81 +1,97 @@
-// === Animate the "Happy Birthday Brenda" text ===
-const animatedTitle = document.getElementById("animatedTitle");
-const titleText = "💖 Happy Birthday Brenda 💖";
-
-let i = 0;
-function typeTitle() {
-  if (i < titleText.length) {
-    animatedTitle.textContent += titleText.charAt(i);
-    i++;
-    setTimeout(typeTitle, 120);
-  }
-}
-window.onload = typeTitle;
-
-// === Brenda's Birthday App - Frontend Script ===
-
-// 🌍 Backend API URL
-const API_URL = "https://brendas-birthday.onrender.com/messages";
-
-// === Select HTML Elements ===
+// === DOM Elements ===
 const messageInput = document.getElementById("messageInput");
-const sendBtn = document.getElementById("sendBtn");
-const messageList = document.getElementById("messageList");
+const sendButton = document.getElementById("sendButton");
+const messagesContainer = document.getElementById("messages");
+const giftButton = document.getElementById("giftButton");
 
-// === Load All Messages from Server ===
+const API_URL = "https://brendas-birthday.onrender.com"; // your live server URL
+
+// === Load Messages ===
 async function loadMessages() {
   try {
-    const response = await fetch(API_URL);
+    const response = await fetch(`${API_URL}/messages`);
+    if (!response.ok) throw new Error("Failed to load messages.");
     const messages = await response.json();
 
-    // Clear the list first
-    messageList.innerHTML = "";
-
-    // Add each message to the list
-    messages.forEach((msg) => {
-      const li = document.createElement("li");
-      li.classList.add("message-item");
-      li.textContent = msg;
-      messageList.appendChild(li);
+    messagesContainer.innerHTML = "";
+    messages.forEach(msg => {
+      const messageEl = document.createElement("div");
+      messageEl.classList.add("message");
+      messageEl.textContent = msg;
+      messagesContainer.appendChild(messageEl);
     });
-  } catch (error) {
-    console.error("⚠️ Error loading messages:", error);
-    messageList.innerHTML = `<p style="color: #ff6b6b;">⚠️ Failed to load messages. Please try again later.</p>`;
+  } catch (err) {
+    console.error(err);
+    messagesContainer.innerHTML = `<p class="error">⚠️ Failed to load messages.</p>`;
   }
 }
 
-// === Send a New Message to the Server ===
+// === Send Message ===
 async function sendMessage() {
   const message = messageInput.value.trim();
-  if (!message) return; // ignore empty messages
+  if (!message) return;
 
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(`${API_URL}/messages`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message }),
     });
 
     const result = await response.json();
     if (result.success) {
-      messageInput.value = ""; // clear input
-      await loadMessages(); // reload messages
+      messageInput.value = "";
+      await loadMessages();
     } else {
-      alert("❌ Failed to send message.");
+      alert("❌ Failed to send message. Try again!");
     }
-  } catch (error) {
-    console.error("⚠️ Error sending message:", error);
-    alert("⚠️ Could not send your message. Try again later.");
+  } catch (err) {
+    console.error("Error sending message:", err);
+    alert("⚠️ Could not reach the server.");
   }
 }
 
 // === Event Listeners ===
-sendBtn.addEventListener("click", sendMessage);
-window.addEventListener("load", loadMessages);
-
-// === Optional: Press Enter to Send ===
+sendButton.addEventListener("click", sendMessage);
 messageInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
 });
+
+// === Surprise Gift Feature ===
+giftButton.addEventListener("click", () => {
+  // --- Confetti Animation ---
+  const confetti = document.createElement("div");
+  confetti.classList.add("confetti");
+  document.body.appendChild(confetti);
+
+  for (let i = 0; i < 60; i++) {
+    const spark = document.createElement("span");
+    spark.classList.add("spark");
+    spark.style.left = Math.random() * 100 + "vw";
+    spark.style.animationDelay = Math.random() * 2 + "s";
+    confetti.appendChild(spark);
+  }
+
+  setTimeout(() => confetti.remove(), 4000);
+
+  // --- Surprise Message ---
+  const surpriseMessage = document.createElement("div");
+  surpriseMessage.classList.add("surprise-message");
+  surpriseMessage.innerHTML = `
+    <p>💞 Life has been better with you in it 💞</p>
+    <div class="floating-hearts">
+      <span>💖</span><span>💗</span><span>💞</span><span>💓</span><span>💘</span>
+    </div>
+  `;
+  document.body.appendChild(surpriseMessage);
+
+  // Optional: soft background tone (if you want)
+  // const audio = new Audio("soft-melody.mp3");
+  // audio.volume = 0.4;
+  // audio.play();
+
+  setTimeout(() => surpriseMessage.remove(), 8000);
+});
+
+// === Initialize ===
+loadMessages();
