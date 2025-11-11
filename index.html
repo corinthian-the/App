@@ -6,20 +6,19 @@
   <title>Happy Birthday Brenda</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* === Duotone Background === */
+    /* === Duotone Animated Background === */
     body {
       margin: 0;
       padding: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #ffb6c1, #ff69b4);
-      background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
       overflow: hidden;
-      color: #fff;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      background-size: 400% 400%;
+      animation: gradientBG 20s ease infinite;
     }
 
     @keyframes gradientBG {
@@ -34,27 +33,50 @@
       padding: 30px 40px;
       border-radius: 20px;
       text-align: center;
-      max-width: 500px;
+      max-width: 600px;
       width: 90%;
       box-shadow: 0 10px 25px rgba(0,0,0,0.2);
       backdrop-filter: blur(10px);
-    }
-
-    /* === Happy Birthday Text === */
-    h1 {
-      font-size: 36px;
       color: #fff;
+      position: relative;
+    }
+
+    /* === Happy Birthday Text with Glow Animation === */
+    .birthday-text {
+      font-size: 36px;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
       margin-bottom: 20px;
-      text-shadow: 2px 2px 8px #ff69b4;
-      animation: floatText 3s ease-in-out infinite alternate;
     }
 
-    @keyframes floatText {
+    .birthday-text span {
+      display: inline-block;
+      animation: glow 2s infinite alternate;
+      text-shadow: 0 0 5px #fff;
+    }
+
+    @keyframes glow {
+      0% { text-shadow: 0 0 5px #ff9a9e, 0 0 10px #ff9a9e; color: #ff9a9e; }
+      50% { text-shadow: 0 0 10px #fad0c4, 0 0 20px #fad0c4; color: #fad0c4; }
+      100% { text-shadow: 0 0 15px #ff9a9e, 0 0 30px #ff9a9e; color: #ff9a9e; }
+    }
+
+    /* === Balloons === */
+    .balloon {
+      font-size: 36px;
+      animation: balloonFloat 3s infinite alternate;
+    }
+
+    @keyframes balloonFloat {
       0% { transform: translateY(0); }
-      100% { transform: translateY(-10px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
     }
 
-    /* === Message Input & Buttons === */
+    /* === Input & Buttons === */
     input[type="text"] {
       width: 100%;
       padding: 12px;
@@ -83,15 +105,6 @@
       box-shadow: 0 6px 12px rgba(0,0,0,0.3);
     }
 
-    /* === Status Messages === */
-    .status {
-      font-size: 16px;
-      margin-top: 10px;
-      min-height: 24px;
-      color: #fff;
-    }
-
-    /* === Surprise Gift Button === */
     #giftBtn {
       background-color: #ff1493;
     }
@@ -100,7 +113,13 @@
       transform: rotate(-10deg) scale(1.1);
     }
 
-    /* === Messages List === */
+    .status {
+      font-size: 16px;
+      margin-top: 10px;
+      min-height: 24px;
+      color: #fff;
+    }
+
     #messagesList {
       list-style: none;
       padding: 0;
@@ -119,7 +138,15 @@
 </head>
 <body>
   <div class="container">
-    <h1>🎉 Happy Birthday Brenda! 🎉</h1>
+    <!-- Birthday text with balloons -->
+    <div class="birthday-text">
+      <span class="balloon">🎈</span>
+      <!-- Letters individually animated -->
+      <span>H</span><span>a</span><span>p</span><span>p</span><span>y</span>
+      <span>B</span><span>i</span><span>r</span><span>t</span><span>h</span><span>d</span><span>a</span><span>y</span>
+      <span>B</span><span>r</span><span>e</span><span>n</span><span>d</span><span>a</span>
+      <span class="balloon">🎈</span>
+    </div>
 
     <!-- Message Input -->
     <input type="text" id="messageInput" placeholder="Type your message">
