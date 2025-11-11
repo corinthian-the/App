@@ -1,70 +1,144 @@
+// server.js
 const express = require("express");
 const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const JWT_SECRET = process.env.JWT_SECRET || "change_this_in_production";
 
-// === Middleware ===
 app.use(cors());
 app.use(express.json());
 
-// === File Path for Messages ===
+// file paths
 const messagesFile = path.join(__dirname, "messages.json");
+const usersFile = path.join(__dirname, "users.json");
 
-// === Ensure messages file exists ===
-if (!fs.existsSync(messagesFile)) {
-  fs.writeFileSync(messagesFile, JSON.stringify([]));
-}
+// ensure files exist
+if (!fs.existsSync(messagesFile)) fs.writeFileSync(messagesFile, JSON.stringify([]));
+if (!fs.existsSync(usersFile)) fs.writeFileSync(usersFile, JSON.stringify([]));
 
-// === Helper Functions ===
-function readMessages() {
+// helpers: read/write JSON files
+function readJSON(filePath) {
   try {
-    const data = fs.readFileSync(messagesFile, "utf8");
-    return JSON.parse(data);
+    return JSON.parse(fs.readFileSync(filePath, "utf8"));
   } catch (err) {
-    console.error("Error reading messages:", err);
+    console.error("Error reading", filePath, err);
     return [];
   }
 }
-
-function writeMessages(messages) {
+function writeJSON(filePath, data) {
   try {
-    fs.writeFileSync(messagesFile, JSON.stringify(messages, null, 2));
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
   } catch (err) {
-    console.error("Error writing messages:", err);
+    console.error("Error writing", filePath, err);
+  }
+}
+
+// === Auth helpers ===
+function generateToken(payload) {
+  // expires in 7 days
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
+}
+
+function authMiddleware(req, res, next) {
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith("Bearer ")) return res.status(401).json({ error: "Missing token" });
+  const token = auth.split(" ")[1];
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: "Invalid token" });
   }
 }
 
 // === Routes ===
-app.get("/", (req, res) => {
-  res.send("💌 Brenda's Birthday API is running!");
+app.get("/", (req, res) => res.send("💌 Brenda's Birthday API (auth + messages) running"));
+
+// --- REGISTER ---
+app.post("/register", (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) return res.status(400).json({ success: false, error: "Username and password required" });
+
+  const users = readJSON(usersFile);
+  const existing = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+  if (existing) return res.status(400).json({ success: false, error: "Username already taken" });
+
+  const saltRounds = 10;
+  const hash = bcrypt.hashSync(password, saltRounds);
+  const newUser = { id: Date.now(), username, passwordHash: hash, createdAt: new Date().toISOString() };
+  users.push(newUser);
+  writeJSON(usersFile, users);
+
+  const token = generateToken({ id: newUser.id, username: newUser.username });
+  res.json({ success: true, token, user: { id: newUser.id, username: newUser.username } });
 });
 
-// Get all messages
+// --- LOGIN ---
+app.post("/login", (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) return res.status(400).json({ success: false, error: "Username and password required" });
+
+  const users = readJSON(usersFile);
+  const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+  if (!user) return res.status(400).json({ success: false, error: "Invalid credentials" });
+
+  const ok = bcrypt.compareSync(password, user.passwordHash);
+  if (!ok) return res.status(400).json({ success: false, error: "Invalid credentials" });
+
+  const token = generateToken({ id: user.id, username: user.username });
+  res.json({ success: true, token, user: { id: user.id, username: user.username } });
+});
+
+// --- GET current user ---
+app.get("/me", authMiddleware, (req, res) => {
+  res.json({ success: true, user: { id: req.user.id, username: req.user.username } });
+});
+
+// --- MESSAGES ---
+// public: get messages
 app.get("/messages", (req, res) => {
-  const messages = readMessages();
+  const messages = readJSON(messagesFile);
   res.json(messages);
 });
 
-// Post a new message
-app.post("/messages", (req, res) => {
-  const { message } = req.body;
-  if (!message || message.trim() === "") {
-    return res.status(400).json({ success: false, error: "Message cannot be empty" });
-  }
+// protected: post message (requires auth)
+app.post("/messages", authMiddleware, (req, res) => {
+  const { text } = req.body;
+  if (!text || text.trim() === "") return res.status(400).json({ success: false, error: "Message cannot be empty" });
 
-  const messages = readMessages();
-  const newMessage = {
-    text: message,
-    timestamp: new Date().toISOString(),
+  const messages = readJSON(messagesFile);
+  const newMsg = {
+    id: Date.now(),
+    text: text.trim(),
+    user: { id: req.user.id, username: req.user.username },
+    timestamp: new Date().toISOString()
   };
-  messages.push(newMessage);
-  writeMessages(messages);
+  messages.push(newMsg);
+  writeJSON(messagesFile, messages);
 
-  res.json({ success: true, message: "Message saved!" });
+  res.json({ success: true, message: "Saved", data: newMsg });
 });
 
-// === Start Server ===
+// allow deleting messages by id (optional: only owner)
+app.delete("/messages/:id", authMiddleware, (req, res) => {
+  const id = Number(req.params.id);
+  let messages = readJSON(messagesFile);
+  const idx = messages.findIndex(m => m.id === id);
+  if (idx === -1) return res.status(404).json({ success: false, error: "Message not found" });
+
+  // only owner can delete
+  if (messages[idx].user.id !== req.user.id) return res.status(403).json({ success: false, error: "Forbidden" });
+
+  messages.splice(idx, 1);
+  writeJSON(messagesFile, messages);
+  res.json({ success: true, message: "Deleted" });
+});
+
+// start
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
