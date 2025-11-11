@@ -199,4 +199,80 @@ footer {
     border-color: transparent;
   }
 }
+/* === Surprise Message Styling === */
+.surprise-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #fff;
+  font-size: 1.8em;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 25px 40px;
+  border-radius: 25px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 25px rgba(255, 150, 220, 0.4);
+  animation: fadeIn 1.5s ease forwards;
+  z-index: 999;
+}
+
+.surprise-message p {
+  background: linear-gradient(90deg, #ffffff, #ffb8e2, #c77dff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+  letter-spacing: 1px;
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+/* === Floating Hearts === */
+.floating-hearts {
+  margin-top: 15px;
+}
+
+.floating-hearts span {
+  display: inline-block;
+  margin: 0 6px;
+  font-size: 1.5em;
+  animation: floatHearts 3s ease-in-out infinite;
+}
+
+.floating-hearts span:nth-child(2) {
+  animation-delay: 0.5s;
+}
+.floating-hearts span:nth-child(3) {
+  animation-delay: 1s;
+}
+.floating-hearts span:nth-child(4) {
+  animation-delay: 1.5s;
+}
+.floating-hearts span:nth-child(5) {
+  animation-delay: 2s;
+}
+
+@keyframes floatHearts {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-20px);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes glowPulse {
+  from {
+    text-shadow: 0 0 10px #ffb8e2, 0 0 20px #ff85c1;
+  }
+  to {
+    text-shadow: 0 0 25px #fff, 0 0 45px #c77dff;
+  }
+}
+
 
