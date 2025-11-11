@@ -1,56 +1,96 @@
-// Function to send a message to the backend
+// ------------------------------
+// Function to send a message
+// ------------------------------
 async function sendMessage(msg) {
   if (!msg) return; // do nothing if empty
 
   try {
     const response = await fetch('http://localhost:3000/api/messages', {
-      method: 'POST',                  // sending data
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: msg }) // message to save
+      body: JSON.stringify({ message: msg })
     });
 
     const data = await response.json();
     console.log('✅ Message saved:', data);
 
-    // Optionally, show confirmation on page
+    // Show status message
     const statusEl = document.getElementById('status');
-    if (statusEl) {
-      statusEl.textContent = 'Message saved!';
-      statusEl.className = 'status success';
-      setTimeout(() => (statusEl.textContent = ''), 2000);
-    }
+    statusEl.textContent = 'Message saved!';
+    statusEl.className = 'status success';
+    setTimeout(() => (statusEl.textContent = ''), 2000);
 
-    // Clear the input field
+    // Clear input
     const inputEl = document.getElementById('messageInput');
-    if (inputEl) inputEl.value = '';
+    inputEl.value = '';
+
+    // Add message to the list
+    addMessageToList(data.message);
 
   } catch (err) {
     console.error('❌ Error sending message:', err);
     const statusEl = document.getElementById('status');
-    if (statusEl) {
-      statusEl.textContent = 'Error saving message!';
-      statusEl.className = 'status error';
-      setTimeout(() => (statusEl.textContent = ''), 2000);
-    }
+    statusEl.textContent = 'Error saving message!';
+    statusEl.className = 'status error';
+    setTimeout(() => (statusEl.textContent = ''), 2000);
   }
 }
 
-// Attach to your send button
-const sendBtn = document.getElementById('sendBtn');
-if (sendBtn) {
-  sendBtn.addEventListener('click', () => {
-    const msg = document.getElementById('messageInput').value;
-    sendMessage(msg);
-  });
+// ------------------------------
+// Function to fetch all messages
+// ------------------------------
+async function fetchMessages() {
+  try {
+    const response = await fetch('http://localhost:3000/api/messages');
+    const messages = await response.json();
+
+    // Clear existing list
+    const listEl = document.getElementById('messagesList');
+    listEl.innerHTML = '';
+
+    // Add each message to the list
+    messages.forEach(msg => addMessageToList(msg.message));
+
+  } catch (err) {
+    console.error('❌ Error fetching messages:', err);
+  }
 }
+
+// ------------------------------
+// Function to append message to the list
+// ------------------------------
+function addMessageToList(msg) {
+  const listEl = document.getElementById('messagesList');
+  const li = document.createElement('li');
+  li.textContent = msg;
+  listEl.appendChild(li);
+}
+
+// ------------------------------
+// Event listeners
+// ------------------------------
+const sendBtn = document.getElementById('sendBtn');
+sendBtn.addEventListener('click', () => {
+  const msg = document.getElementById('messageInput').value;
+  sendMessage(msg);
+});
 
 // Optional: Send message on Enter key
 const inputEl = document.getElementById('messageInput');
-if (inputEl) {
-  inputEl.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      const msg = inputEl.value;
-      sendMessage(msg);
-    }
-  });
-}
+inputEl.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    const msg = inputEl.value;
+    sendMessage(msg);
+  }
+});
+
+// Surprise gift button
+const giftBtn = document.getElementById('giftBtn');
+giftBtn.addEventListener('click', () => {
+  alert('🎁 Surprise! You got a special gift, Brenda!');
+});
+
+// ------------------------------
+// Fetch messages on page load
+// ------------------------------
+window.addEventListener('DOMContentLoaded', fetchMessages);
