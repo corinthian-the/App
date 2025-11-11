@@ -1,22 +1,21 @@
+// ===== IMPORTS =====
 const express = require('express');
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const cors = require('cors');
 const path = require('path');
 
+// ===== APP SETUP =====
 const app = express();
-const port = 3000;
-
-// Middleware
 app.use(express.json());
+app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// MongoDB connection
-const uri = 'mongodb+srv://Kenneth_Adm:YourPassword@cluster0.l4i1nyh.mongodb.net/appDB?retryWrites=true&w=majority';
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('✅ MongoDB connected!'))
+// ===== MONGODB CONNECTION =====
+mongoose.connect('mongodb+srv://<YOUR_USERNAME>:<YOUR_PASSWORD>@cluster0.l4i1nyh.mongodb.net/brendaApp?retryWrites=true&w=majority')
+  .then(() => console.log('✅ MongoDB connected successfully!'))
   .catch(err => console.error('❌ MongoDB connection error:', err));
 
-// Schemas
+// ===== SCHEMAS =====
 const userSchema = new mongoose.Schema({
   username: { type: String, unique: true },
   password: String
@@ -31,51 +30,61 @@ const messageSchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema);
 const Message = mongoose.model('Message', messageSchema);
 
-// Routes
+// ===== ROUTES =====
+
+// --- Sign Up ---
 app.post('/api/signup', async (req, res) => {
   try {
     const { username, password } = req.body;
-    const hash = await bcrypt.hash(password, 10);
-    const user = new User({ username, password: hash });
-    await user.save();
+    const existingUser = await User.findOne({ username });
+    if (existingUser) return res.json({ success: false, error: 'Username already exists' });
+
+    await User.create({ username, password });
     res.json({ success: true });
   } catch (err) {
-    res.json({ success: false, error: 'User already exists' });
+    console.error('Signup error:', err);
+    res.status(500).json({ success: false, error: 'Server error during signup' });
   }
 });
 
+// --- Login ---
 app.post('/api/login', async (req, res) => {
   try {
     const { username, password } = req.body;
-    const user = await User.findOne({ username });
-    if (!user) return res.json({ success: false, error: 'User not found' });
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.json({ success: false, error: 'Wrong password' });
+    const user = await User.findOne({ username, password });
+    if (!user) return res.json({ success: false, error: 'Invalid credentials' });
+
     res.json({ success: true });
   } catch (err) {
-    res.json({ success: false, error: 'Server error' });
+    console.error('Login error:', err);
+    res.status(500).json({ success: false, error: 'Server error during login' });
   }
 });
 
+// --- Post Message ---
 app.post('/api/messages', async (req, res) => {
   try {
-    const msg = new Message({ username: req.body.username, message: req.body.message });
-    const saved = await msg.save();
-    res.json(saved);
+    const { username, message } = req.body;
+    const newMsg = new Message({ username, message });
+    await newMsg.save();
+    res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to save message' });
+    console.error('Message error:', err);
+    res.status(500).json({ success: false, error: 'Error saving message' });
   }
 });
 
+// --- Get Messages ---
 app.get('/api/messages', async (req, res) => {
   try {
-    const messages = await Message.find().sort({ createdAt: 1 });
-    res.json(messages);
+    const msgs = await Message.find().sort({ createdAt: -1 }).limit(20);
+    res.json(msgs);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch messages' });
+    console.error('Fetch messages error:', err);
+    res.status(500).json({ success: false, error: 'Error fetching messages' });
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+// ===== START SERVER =====
+const PORT = 3000;
+app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));
