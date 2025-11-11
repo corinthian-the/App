@@ -1,64 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Brenda's Birthday App</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>App Messaging</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="header">
-    <h1 id="animatedTitle">🎂 Happy Birthday Brenda 🎂</h1>
-    <p class="subtitle">A special place made with love 💖</p>
+  <div class="container">
+    <h1>Send a Message</h1>
+
+    <!-- Input field -->
+    <input type="text" id="messageInput" placeholder="Type your message">
+
+    <!-- Send button -->
+    <button id="sendBtn">Send</button>
+
+    <!-- Status messages -->
+    <div id="status" class="status"></div>
+
+    <!-- Area to display all messages -->
+    <h2>Messages:</h2>
+    <ul id="messagesList"></ul>
   </div>
 
-  <!-- === AUTH SECTION === -->
-  <div class="auth-section">
-    <div class="auth-container">
-      <div class="auth-box" id="signupBox">
-        <h2>Sign Up</h2>
-        <input type="text" id="signupName" placeholder="Enter name" />
-        <input type="password" id="signupPassword" placeholder="Enter password" />
-        <button class="fancy-btn" id="signupBtn">Sign Up</button>
-      </div>
-
-      <div class="auth-box" id="loginBox">
-        <h2>Login</h2>
-        <input type="text" id="loginName" placeholder="Enter name" />
-        <input type="password" id="loginPassword" placeholder="Enter password" />
-        <button class="fancy-btn" id="loginBtn">Login</button>
-      </div>
-    </div>
-    <p class="auth-msg" id="authMsg"></p>
-  </div>
-
-  <!-- === APP SECTION === -->
-  <div class="app-section" id="appSection" style="display: none;">
-    <div class="top-bar">
-      <h2>💌 Brenda’s Messages</h2>
-      <button class="logout-btn" id="logoutBtn">Logout</button>
-    </div>
-
-    <div class="messages-container" id="messagesContainer"></div>
-
-    <div class="input-area">
-      <input type="text" id="messageInput" placeholder="Type your message..." />
-      <button id="sendBtn" class="fancy-btn">Send</button>
-      <button class="gift-btn" id="giftBtn">🎁 Surprise Gift</button>
-    </div>
-
-    <p class="error-msg" id="errorMsg"></p>
-  </div>
-
-  <!-- === SURPRISE MODAL === -->
-  <div id="giftModal" class="modal">
-    <div class="modal-content">
-      <h2>🎁 Surprise Gift 🎁</h2>
-      <p id="giftMessage">✨ Life has been better with you in it ✨</p>
-      <button class="close-btn" id="closeGift">Close</button>
-    </div>
-  </div>
-
+  <!-- Front-end script -->
   <script src="script.js"></script>
 </body>
 </html>
