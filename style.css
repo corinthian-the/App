@@ -81,7 +81,6 @@ button:hover {
   flex-wrap: wrap;
 }
 
-/* Each letter glows individually */
 .birthday-text span {
   display: inline-block;
   opacity: 0;
@@ -89,24 +88,21 @@ button:hover {
   text-shadow: 0 0 5px #fff;
 }
 
-/* Balloons floating animation */
 .balloon {
   font-size: 42px;
   animation: balloonFloat 3s infinite alternate;
 }
 
-/* Floating balloons */
 @keyframes balloonFloat {
   0% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
   100% { transform: translateY(0); }
 }
 
-/* Letter glow animation */
 @keyframes glowLetter {
-  0% { opacity: 0; color: #fff; }
-  50% { opacity: 1; color: #ff9a9e; text-shadow: 0 0 10px #ff9a9e, 0 0 20px #fad0c4; }
-  100% { opacity: 1; color: #fad0c4; text-shadow: 0 0 15px #ff9a9e, 0 0 25px #fad0c4; }
+  0% { opacity:0;color:#fff; }
+  50% { opacity:1;color:#ff9a9e; text-shadow:0 0 10px #ff9a9e,0 0 20px #fad0c4;}
+  100% { opacity:1;color:#fad0c4; text-shadow:0 0 15px #ff9a9e,0 0 25px #fad0c4;}
 }
 
 /* ===== MESSAGES LIST ===== */
@@ -126,7 +122,5 @@ button:hover {
   text-align: left;
 }
 
-/* ===== INPUT & BUTTON CONTAINER SPACING ===== */
-#messageInput {
-  margin-bottom: 10px;
-}
+/* ===== INPUT & BUTTON SPACING ===== */
+#messageInput { margin-bottom: 10px; }
