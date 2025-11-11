@@ -1,58 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Brenda's App 💖</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brenda's Birthday App</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- HEADER -->
-  <header class="header">
-    <h1 id="animatedTitle">💖 Happy Birthday Brenda 💖</h1>
-    <p class="subtitle">A special space made just for you 🌸</p>
-  </header>
+  <div class="header">
+    <h1 id="animatedTitle">🎂 Happy Birthday Brenda 🎂</h1>
+    <p class="subtitle">A special place made with love 💖</p>
+  </div>
 
-  <!-- AUTH SECTION -->
-  <section id="authSection" class="auth-section">
+  <!-- === AUTH SECTION === -->
+  <div class="auth-section">
     <div class="auth-container">
-      <div class="auth-box">
-        <h2>Register</h2>
-        <input id="regUsername" placeholder="Enter username" />
-        <input id="regPassword" type="password" placeholder="Enter password" />
-        <button id="registerBtn" class="fancy-btn">Create Account</button>
+      <div class="auth-box" id="signupBox">
+        <h2>Sign Up</h2>
+        <input type="text" id="signupName" placeholder="Enter name" />
+        <input type="password" id="signupPassword" placeholder="Enter password" />
+        <button class="fancy-btn" id="signupBtn">Sign Up</button>
       </div>
 
-      <div class="auth-box">
+      <div class="auth-box" id="loginBox">
         <h2>Login</h2>
-        <input id="loginUsername" placeholder="Enter username" />
-        <input id="loginPassword" type="password" placeholder="Enter password" />
-        <button id="loginBtn" class="fancy-btn">Log In</button>
+        <input type="text" id="loginName" placeholder="Enter name" />
+        <input type="password" id="loginPassword" placeholder="Enter password" />
+        <button class="fancy-btn" id="loginBtn">Login</button>
       </div>
     </div>
-    <p id="authMsg" class="auth-msg"></p>
-  </section>
+    <p class="auth-msg" id="authMsg"></p>
+  </div>
 
-  <!-- APP SECTION (hidden until logged in) -->
-  <section id="appSection" class="app-section" style="display: none;">
+  <!-- === APP SECTION === -->
+  <div class="app-section" id="appSection" style="display: none;">
     <div class="top-bar">
-      <span id="welcomeUser"></span>
-      <button id="logoutBtn" class="logout-btn">Logout</button>
+      <h2>💌 Brenda’s Messages</h2>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
     </div>
 
-    <div id="messages" class="messages-container"></div>
+    <div class="messages-container" id="messagesContainer"></div>
 
     <div class="input-area">
-      <input id="messageInput" placeholder="Write a sweet message for Brenda..." />
-      <button id="sendButton" class="fancy-btn">💌 Send</button>
-      <button id="giftButton" class="gift-btn">🎁 Surprise Gift</button>
+      <input type="text" id="messageInput" placeholder="Type your message..." />
+      <button id="sendBtn" class="fancy-btn">Send</button>
+      <button class="gift-btn" id="giftBtn">🎁 Surprise Gift</button>
     </div>
-  </section>
 
-  <!-- ERROR BOX -->
-  <p id="error" class="error-msg" style="display:none;">⚠️ Something went wrong. Try again later.</p>
+    <p class="error-msg" id="errorMsg"></p>
+  </div>
 
-  <!-- SCRIPT -->
+  <!-- === SURPRISE MODAL === -->
+  <div id="giftModal" class="modal">
+    <div class="modal-content">
+      <h2>🎁 Surprise Gift 🎁</h2>
+      <p id="giftMessage">✨ Life has been better with you in it ✨</p>
+      <button class="close-btn" id="closeGift">Close</button>
+    </div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
