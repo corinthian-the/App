@@ -1,96 +1,66 @@
-// ------------------------------
-// Function to send a message
-// ------------------------------
-async function sendMessage(msg) {
-  if (!msg) return; // do nothing if empty
+let currentUser = null;
+const authForms = document.getElementById('authForms');
+const birthdayPage = document.getElementById('birthdayPage');
+const authBtn = document.getElementById('authBtn');
+const toggleLink = document.getElementById('toggleLink');
+let loginMode = true;
 
-  try {
-    const response = await fetch('http://localhost:3000/api/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: msg })
-    });
-
-    const data = await response.json();
-    console.log('✅ Message saved:', data);
-
-    // Show status message
-    const statusEl = document.getElementById('status');
-    statusEl.textContent = 'Message saved!';
-    statusEl.className = 'status success';
-    setTimeout(() => (statusEl.textContent = ''), 2000);
-
-    // Clear input
-    const inputEl = document.getElementById('messageInput');
-    inputEl.value = '';
-
-    // Add message to the list
-    addMessageToList(data.message);
-
-  } catch (err) {
-    console.error('❌ Error sending message:', err);
-    const statusEl = document.getElementById('status');
-    statusEl.textContent = 'Error saving message!';
-    statusEl.className = 'status error';
-    setTimeout(() => (statusEl.textContent = ''), 2000);
-  }
-}
-
-// ------------------------------
-// Function to fetch all messages
-// ------------------------------
-async function fetchMessages() {
-  try {
-    const response = await fetch('http://localhost:3000/api/messages');
-    const messages = await response.json();
-
-    // Clear existing list
-    const listEl = document.getElementById('messagesList');
-    listEl.innerHTML = '';
-
-    // Add each message to the list
-    messages.forEach(msg => addMessageToList(msg.message));
-
-  } catch (err) {
-    console.error('❌ Error fetching messages:', err);
-  }
-}
-
-// ------------------------------
-// Function to append message to the list
-// ------------------------------
-function addMessageToList(msg) {
-  const listEl = document.getElementById('messagesList');
-  const li = document.createElement('li');
-  li.textContent = msg;
-  listEl.appendChild(li);
-}
-
-// ------------------------------
-// Event listeners
-// ------------------------------
-const sendBtn = document.getElementById('sendBtn');
-sendBtn.addEventListener('click', () => {
-  const msg = document.getElementById('messageInput').value;
-  sendMessage(msg);
+// Toggle between login/signup forms
+toggleLink.addEventListener('click', () => {
+  loginMode = !loginMode;
+  document.getElementById('formTitle').innerText = loginMode ? 'Login' : 'Sign Up';
+  authBtn.innerText = loginMode ? 'Login' : 'Sign Up';
 });
 
-// Optional: Send message on Enter key
-const inputEl = document.getElementById('messageInput');
-inputEl.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') {
-    const msg = inputEl.value;
-    sendMessage(msg);
+// Handle authentication
+authBtn.addEventListener('click', async () => {
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value.trim();
+  if (!username || !password) return;
+
+  const res = await fetch(`/api/${loginMode ? 'login' : 'signup'}`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({username, password})
+  });
+
+  const data = await res.json();
+  if (data.success) {
+    currentUser = username;
+    authForms.style.display = 'none';
+    birthdayPage.style.display = 'block';
+    loadMessages();
+  } else {
+    document.getElementById('authStatus').innerText = data.error;
   }
 });
 
-// Surprise gift button
-const giftBtn = document.getElementById('giftBtn');
-giftBtn.addEventListener('click', () => {
-  alert('🎁 Surprise! You got a special gift, Brenda!');
+// Send a message
+document.getElementById('sendBtn').addEventListener('click', async () => {
+  const msgInput = document.getElementById('messageInput');
+  const msg = msgInput.value.trim();
+  if (!msg) return;
+
+  await fetch('/api/messages', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({username: currentUser, message: msg})
+  });
+
+  msgInput.value = '';
+  loadMessages();
 });
 
-// ------------------------------
-// Fetch messages on page load
-// ------------------------------
-window.addEventListener('DOMContentLoaded', fetchMessages);
+// Load all messages
+async function loadMessages() {
+  const res = await fetch('/api/messages');
+  const msgs = await res.json();
+  const list = document.getElementById('messagesList');
+  list.innerHTML = '';
+
+  msgs.forEach(m => {
+    const li = document.createElement('li');
+    li.textContent = `${m.username}: ${m.message}`;
+    list.appendChild(li);
+  });
+}
