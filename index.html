@@ -1,100 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Brenda's Birthday 💖</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Brenda's App 💖</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="title-container">
-    <h1 id="animatedTitle"></h1>
-  </div>
+  <!-- HEADER -->
+  <header class="header">
+    <h1 id="animatedTitle">💖 Happy Birthday Brenda 💖</h1>
+    <p class="subtitle">A special space made just for you 🌸</p>
+  </header>
 
-  <div id="messages"></div>
+  <!-- AUTH SECTION -->
+  <section id="authSection" class="auth-section">
+    <div class="auth-container">
+      <div class="auth-box">
+        <h2>Register</h2>
+        <input id="regUsername" placeholder="Enter username" />
+        <input id="regPassword" type="password" placeholder="Enter password" />
+        <button id="registerBtn" class="fancy-btn">Create Account</button>
+      </div>
 
-  <div class="input-area">
-    <input type="text" id="messageInput" placeholder="Write a sweet message for Brenda..." />
-    <button id="sendButton">💌 Send</button>
-  </div>
+      <div class="auth-box">
+        <h2>Login</h2>
+        <input id="loginUsername" placeholder="Enter username" />
+        <input id="loginPassword" type="password" placeholder="Enter password" />
+        <button id="loginBtn" class="fancy-btn">Log In</button>
+      </div>
+    </div>
+    <p id="authMsg" class="auth-msg"></p>
+  </section>
 
-  <p id="error">⚠️ Failed to send message. Try again later.</p>
+  <!-- APP SECTION (hidden until logged in) -->
+  <section id="appSection" class="app-section" style="display: none;">
+    <div class="top-bar">
+      <span id="welcomeUser"></span>
+      <button id="logoutBtn" class="logout-btn">Logout</button>
+    </div>
 
-  <footer>Made with 💖 for Brenda’s Birthday</footer>
+    <div id="messages" class="messages-container"></div>
 
-  <script>
-    // === Animate the "Happy Birthday Brenda" text ===
-    const animatedTitle = document.getElementById("animatedTitle");
-    const titleText = "💖 Happy Birthday Brenda 💖";
-    let i = 0;
-    function typeTitle() {
-      if (i < titleText.length) {
-        animatedTitle.textContent += titleText.charAt(i);
-        i++;
-        setTimeout(typeTitle, 120);
-      }
-    }
-    window.onload = typeTitle;
+    <div class="input-area">
+      <input id="messageInput" placeholder="Write a sweet message for Brenda..." />
+      <button id="sendButton" class="fancy-btn">💌 Send</button>
+      <button id="giftButton" class="gift-btn">🎁 Surprise Gift</button>
+    </div>
+  </section>
 
-    // === Messaging Logic ===
-    const messagesDiv = document.getElementById("messages");
-    const sendButton = document.getElementById("sendButton");
-    const messageInput = document.getElementById("messageInput");
-    const errorText = document.getElementById("error");
+  <!-- ERROR BOX -->
+  <p id="error" class="error-msg" style="display:none;">⚠️ Something went wrong. Try again later.</p>
 
-    const API_URL = "https://brendas-birthday.onrender.com";
-
-    // Load existing messages
-    async function loadMessages() {
-      try {
-        const res = await fetch(`${API_URL}/messages`);
-        if (!res.ok) throw new Error("Failed to fetch messages");
-        const messages = await res.json();
-        messagesDiv.innerHTML = "";
-        messages.forEach((msg) => {
-          const msgDiv = document.createElement("div");
-          msgDiv.classList.add("message");
-          msgDiv.innerHTML = `<p>${msg.text}</p><small>${new Date(
-            msg.timestamp
-          ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</small>`;
-          messagesDiv.appendChild(msgDiv);
-        });
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    // Send new message
-    async function sendMessage() {
-      const message = messageInput.value.trim();
-      if (!message) return;
-
-      try {
-        const res = await fetch(`${API_URL}/messages`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message }),
-        });
-        const data = await res.json();
-        if (data.success) {
-          messageInput.value = "";
-          errorText.style.display = "none";
-          loadMessages();
-        } else {
-          errorText.style.display = "block";
-        }
-      } catch (err) {
-        errorText.style.display = "block";
-        console.error("Error sending message:", err);
-      }
-    }
-
-    sendButton.addEventListener("click", sendMessage);
-    messageInput.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") sendMessage();
-    });
-
-    loadMessages();
-  </script>
+  <!-- SCRIPT -->
+  <script src="script.js"></script>
 </body>
 </html>
