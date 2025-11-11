@@ -3,13 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Happy Birthday Brenda</title>
-
-  <!-- Google Font -->
+  <title>Brenda's Birthday App</title>
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-
   <style>
-    /* === Animated Stylish Background === */
+    /* ===== BODY & BACKGROUND ===== */
     body {
       margin: 0;
       padding: 0;
@@ -18,7 +15,6 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      overflow: hidden;
       background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #a18cd1, #fbc2eb);
       background-size: 400% 400%;
       animation: gradientBG 20s ease infinite;
@@ -32,21 +28,45 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* === Container === */
+    /* ===== CONTAINER ===== */
     .container {
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: rgba(255,255,255,0.1);
       padding: 30px 40px;
       border-radius: 20px;
       text-align: center;
       max-width: 600px;
       width: 90%;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
       backdrop-filter: blur(10px);
       color: #fff;
-      position: relative;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     }
 
-    /* === Birthday Text with Glow === */
+    /* ===== INPUTS & BUTTONS ===== */
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 12px;
+      border: none;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #ff69b4;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    button:hover { transform: scale(1.05); }
+
+    .status { margin-top:10px; min-height:24px; color:#fff; }
+
+    /* ===== BIRTHDAY TEXT ===== */
     .birthday-text {
       font-size: 42px;
       display: flex;
@@ -60,52 +80,11 @@
     .birthday-text span {
       display: inline-block;
       opacity: 0;
-      animation: glowLetter 1s forwards;
+      animation: glowLetter 2s infinite alternate;
       text-shadow: 0 0 5px #fff;
     }
 
-    /* Stagger letters */
-    .birthday-text span:nth-child(1) { animation-delay: 0s; }
-    .birthday-text span:nth-child(2) { animation-delay: 0.1s; }
-    .birthday-text span:nth-child(3) { animation-delay: 0.2s; }
-    .birthday-text span:nth-child(4) { animation-delay: 0.3s; }
-    .birthday-text span:nth-child(5) { animation-delay: 0.4s; }
-    .birthday-text span:nth-child(6) { animation-delay: 0.5s; }
-    .birthday-text span:nth-child(7) { animation-delay: 0.6s; }
-    .birthday-text span:nth-child(8) { animation-delay: 0.7s; }
-    .birthday-text span:nth-child(9) { animation-delay: 0.8s; }
-    .birthday-text span:nth-child(10){ animation-delay: 0.9s; }
-    .birthday-text span:nth-child(11){ animation-delay: 1s; }
-    .birthday-text span:nth-child(12){ animation-delay: 1.1s; }
-    .birthday-text span:nth-child(13){ animation-delay: 1.2s; }
-    .birthday-text span:nth-child(14){ animation-delay: 1.3s; }
-    .birthday-text span:nth-child(15){ animation-delay: 1.4s; }
-    .birthday-text span:nth-child(16){ animation-delay: 1.5s; }
-    .birthday-text span:nth-child(17){ animation-delay: 1.6s; }
-    .birthday-text span:nth-child(18){ animation-delay: 1.7s; }
-    .birthday-text span:nth-child(19){ animation-delay: 1.8s; }
-    .birthday-text span:nth-child(20){ animation-delay: 1.9s; }
-    .birthday-text span:nth-child(21){ animation-delay: 2s; }
-    .birthday-text span:nth-child(22){ animation-delay: 2.1s; }
-    .birthday-text span:nth-child(23){ animation-delay: 2.2s; }
-    .birthday-text span:nth-child(24){ animation-delay: 2.3s; }
-
-    @keyframes glowLetter {
-      0% { opacity: 0; color: #fff; text-shadow: 0 0 0 #fff; }
-      50% { opacity: 1; color: #ff9a9e; text-shadow: 0 0 10px #ff9a9e, 0 0 20px #fad0c4; }
-      100% { opacity: 1; color: #fad0c4; text-shadow: 0 0 15px #ff9a9e, 0 0 25px #fad0c4; }
-    }
-
-    /* Continuous color cycling */
-    .birthday-text span {
-      animation: glowLetter 2s infinite alternate;
-    }
-
-    /* === Balloons === */
-    .balloon {
-      font-size: 42px;
-      animation: balloonFloat 3s infinite alternate;
-    }
+    .balloon { font-size: 42px; animation: balloonFloat 3s infinite alternate; }
 
     @keyframes balloonFloat {
       0% { transform: translateY(0); }
@@ -113,92 +92,115 @@
       100% { transform: translateY(0); }
     }
 
-    /* === Input & Buttons === */
-    input[type="text"] {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 12px;
-      border: none;
-      font-size: 16px;
-      outline: none;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    @keyframes glowLetter {
+      0% { opacity:0;color:#fff; }
+      50% { opacity:1;color:#ff9a9e; text-shadow:0 0 10px #ff9a9e,0 0 20px #fad0c4;}
+      100% { opacity:1;color:#fad0c4; text-shadow:0 0 15px #ff9a9e,0 0 25px #fad0c4;}
     }
 
-    button {
-      background-color: #ff69b4;
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      padding: 12px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      margin: 5px;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-    }
-
-    #giftBtn {
-      background-color: #ff1493;
-    }
-
-    #giftBtn:hover {
-      transform: rotate(-10deg) scale(1.1);
-    }
-
-    .status {
-      font-size: 16px;
-      margin-top: 10px;
-      min-height: 24px;
-      color: #fff;
-    }
-
-    #messagesList {
-      list-style: none;
-      padding: 0;
-      max-height: 150px;
-      overflow-y: auto;
-      margin-top: 15px;
-    }
-
-    #messagesList li {
-      background: rgba(255,255,255,0.2);
-      padding: 8px 12px;
-      margin-bottom: 8px;
-      border-radius: 12px;
-    }
+    /* ===== MESSAGES LIST ===== */
+    #messagesList { list-style:none; padding:0; max-height:150px; overflow-y:auto; margin-top:15px; }
+    #messagesList li { background: rgba(255,255,255,0.2); padding:8px 12px; margin-bottom:8px; border-radius:12px; }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Birthday text with balloons -->
-    <div class="birthday-text">
-      <span class="balloon">🎈</span>
-      <span>H</span><span>a</span><span>p</span><span>p</span><span>y</span>
-      <span>B</span><span>i</span><span>r</span><span>t</span><span>h</span>
-      <span>d</span><span>a</span><span>y</span>
-      <span>B</span><span>r</span><span>e</span><span>n</span><span>d</span><span>a</span>
-      <span class="balloon">🎈</span>
+
+    <!-- ===== LOGIN / SIGNUP ===== -->
+    <div id="authForms">
+      <h2 id="formTitle">Login</h2>
+      <input type="text" id="username" placeholder="Username">
+      <input type="password" id="password" placeholder="Password">
+      <button id="authBtn">Login</button>
+      <p id="toggleAuth">Don't have an account? <span id="toggleLink">Sign Up</span></p>
+      <div id="authStatus" class="status"></div>
     </div>
 
-    <!-- Message Input -->
-    <input type="text" id="messageInput" placeholder="Type your message">
+    <!-- ===== BIRTHDAY PAGE ===== -->
+    <div id="birthdayPage" style="display:none;">
+      <div class="birthday-text">
+        <span class="balloon">🎈</span>
+        <span>H</span><span>a</span><span>p</span><span>p</span><span>y</span>
+        <span>B</span><span>i</span><span>r</span><span>t</span><span>h</span>
+        <span>d</span><span>a</span><span>y</span>
+        <span>B</span><span>r</span><span>e</span><span>n</span><span>d</span><span>a</span>
+        <span class="balloon">🎈</span>
+      </div>
 
-    <!-- Buttons -->
-    <button id="sendBtn">Send Message 💌</button>
-    <button id="giftBtn">🎁 Surprise Gift</button>
+      <input type="text" id="messageInput" placeholder="Type your message">
+      <button id="sendBtn">Send Message 💌</button>
+      <button id="giftBtn">🎁 Surprise Gift</button>
 
-    <!-- Status -->
-    <div id="status" class="status"></div>
+      <div id="status" class="status"></div>
+      <ul id="messagesList"></ul>
+    </div>
 
-    <!-- Messages List -->
-    <ul id="messagesList"></ul>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    // ===== SCRIPT.JS FUNCTIONALITY =====
+    let currentUser = null;
+    const authForms = document.getElementById('authForms');
+    const birthdayPage = document.getElementById('birthdayPage');
+    const authBtn = document.getElementById('authBtn');
+    const toggleLink = document.getElementById('toggleLink');
+    let loginMode = true;
+
+    // Toggle login/signup
+    toggleLink.addEventListener('click', () => {
+      loginMode = !loginMode;
+      document.getElementById('formTitle').innerText = loginMode ? 'Login' : 'Sign Up';
+      authBtn.innerText = loginMode ? 'Login' : 'Sign Up';
+    });
+
+    // Handle auth
+    authBtn.addEventListener('click', async () => {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      if (!username || !password) return;
+
+      const res = await fetch(`/api/${loginMode ? 'login' : 'signup'}`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({username,password})
+      });
+      const data = await res.json();
+      if (data.success) {
+        currentUser = username;
+        authForms.style.display = 'none';
+        birthdayPage.style.display = 'block';
+        loadMessages();
+      } else {
+        document.getElementById('authStatus').innerText = data.error;
+      }
+    });
+
+    // Send message
+    document.getElementById('sendBtn').addEventListener('click', async () => {
+      const msgInput = document.getElementById('messageInput');
+      const msg = msgInput.value.trim();
+      if (!msg) return;
+      await fetch('/api/messages', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({username:currentUser,message:msg})
+      });
+      msgInput.value='';
+      loadMessages();
+    });
+
+    // Load messages
+    async function loadMessages(){
+      const res = await fetch('/api/messages');
+      const msgs = await res.json();
+      const list = document.getElementById('messagesList');
+      list.innerHTML='';
+      msgs.forEach(m => {
+        const li = document.createElement('li');
+        li.textContent = `${m.username}: ${m.message}`;
+        list.appendChild(li);
+      });
+    }
+  </script>
 </body>
 </html>
