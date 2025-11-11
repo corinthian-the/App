@@ -142,3 +142,49 @@ app.delete("/messages/:id", authMiddleware, (req, res) => {
 
 // start
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+
+const app = express();
+app.use(express.json());
+app.use(cors()); // allows front-end to communicate with backend
+
+// MongoDB connection
+const uri = 'mongodb+srv://Brenda:18atlast@cluster0.l4i1nyh.mongodb.net/app?retryWrites=true&w=majority';
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('✅ MongoDB connected'))
+  .catch(err => console.error('❌ MongoDB connection error:', err));
+
+// Message schema
+const messageSchema = new mongoose.Schema({
+  message: String,
+  createdAt: { type: Date, default: Date.now }
+});
+
+const Message = mongoose.model('Message', messageSchema);
+
+// POST route to save messages
+app.post('/api/messages', async (req, res) => {
+  try {
+    const newMessage = new Message({ message: req.body.message });
+    const saved = await newMessage.save();
+    res.json(saved);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET route to fetch messages (optional)
+app.get('/api/messages', async (req, res) => {
+  try {
+    const messages = await Message.find().sort({ createdAt: -1 });
+    res.json(messages);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Start server
+const PORT = 3000;
+app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
