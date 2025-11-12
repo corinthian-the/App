@@ -42,6 +42,7 @@ input[type="text"], input[type="password"] {
   border-radius:12px;
   border:none;
   font-size:16px;
+  outline:none;
 }
 button {
   background-color:#ff69b4;
@@ -52,8 +53,9 @@ button {
   font-size:16px;
   cursor:pointer;
   margin:5px;
+  transition: transform 0.2s, background-color 0.2s;
 }
-button:hover { transform:scale(1.05); }
+button:hover { transform:scale(1.05); background-color:#ff85c1; }
 .status { margin-top:10px; min-height:24px; color:#fff; }
 .birthday-text {
   font-size:42px;
@@ -105,7 +107,8 @@ button:hover { transform:scale(1.05); }
   100% { transform:translateY(0);}
 }
 #messagesList { list-style:none; padding:0; max-height:150px; overflow-y:auto; margin-top:15px; }
-#messagesList li { background: rgba(255,255,255,0.2); padding:8px 12px; margin-bottom:8px; border-radius:12px; }
+#messagesList li { background: rgba(255,255,255,0.2); padding:8px 12px; margin-bottom:8px; border-radius:12px; text-align:left; }
+#messageInput { margin-bottom:10px; }
 </style>
 </head>
 <body>
@@ -150,62 +153,91 @@ const authBtn = document.getElementById('authBtn');
 const toggleLink = document.getElementById('toggleLink');
 let loginMode = true;
 
+// Toggle login/signup form
 toggleLink.addEventListener('click', () => {
   loginMode = !loginMode;
   document.getElementById('formTitle').innerText = loginMode ? 'Login' : 'Sign Up';
   authBtn.innerText = loginMode ? 'Login' : 'Sign Up';
+  document.getElementById('authStatus').innerText = '';
 });
 
+// Login / Sign-up
 authBtn.addEventListener('click', async () => {
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value.trim();
-  if (!username || !password) return;
+  if (!username || !password) return showAuthStatus('Username & password required!');
 
   const endpoint = loginMode ? '/api/login' : '/api/signup';
-  const res = await fetch(endpoint, {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({username,password})
-  });
-  const data = await res.json();
-  if (data.success) {
-    currentUser = username;
-    authForms.style.display = 'none';
-    birthdayPage.style.display = 'block';
-    loadMessages();
-  } else {
-    document.getElementById('authStatus').innerText = data.error;
+  try {
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    if (data.success) {
+      currentUser = username;
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+      authForms.style.display = 'none';
+      birthdayPage.style.display = 'block';
+      loadMessages();
+      setInterval(loadMessages, 5000); // auto-refresh
+    } else {
+      showAuthStatus(data.error || 'Something went wrong!');
+    }
+  } catch (err) {
+    showAuthStatus('Server error. Try again.');
+    console.error(err);
   }
 });
 
+// Send message
 document.getElementById('sendBtn').addEventListener('click', async () => {
   const msgInput = document.getElementById('messageInput');
   const msg = msgInput.value.trim();
   if (!msg) return;
 
-  await fetch('/api/messages', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({username: currentUser, message: msg})
-  });
-  msgInput.value='';
-  loadMessages();
+  try {
+    await fetch('/api/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: currentUser, message: msg })
+    });
+    msgInput.value = '';
+    loadMessages();
+  } catch (err) {
+    console.error(err);
+  }
 });
 
+// Surprise gift
 document.getElementById('giftBtn').addEventListener('click', () => {
   alert('🎁 Surprise! Brenda loves you!');
 });
 
-async function loadMessages(){
-  const res = await fetch('/api/messages');
-  const msgs = await res.json();
-  const list = document.getElementById('messagesList');
-  list.innerHTML='';
-  msgs.forEach(m => {
-    const li = document.createElement('li');
-    li.textContent = `${m.username}: ${m.message}`;
-    list.appendChild(li);
-  });
+// Load messages
+async function loadMessages() {
+  try {
+    const res = await fetch('/api/messages');
+    const msgs = await res.json();
+    const list = document.getElementById('messagesList');
+    list.innerHTML = '';
+    msgs.forEach(m => {
+      const li = document.createElement('li');
+      li.textContent = `${m.username}: ${m.message}`;
+      list.appendChild(li);
+    });
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// Auth status helper
+function showAuthStatus(msg) {
+  const status = document.getElementById('authStatus');
+  status.innerText = msg;
+  setTimeout(() => { status.innerText = ''; }, 3000);
 }
 </script>
 </body>
