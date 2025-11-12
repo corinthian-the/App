@@ -1,66 +1,87 @@
-let currentUser = null;
-const authForms = document.getElementById('authForms');
-const birthdayPage = document.getElementById('birthdayPage');
-const authBtn = document.getElementById('authBtn');
-const toggleLink = document.getElementById('toggleLink');
-let loginMode = true;
+// server.js
+const express = require('express');
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const cors = require('cors');
+const jwt = require('jsonwebtoken');
 
-// Toggle between login/signup forms
-toggleLink.addEventListener('click', () => {
-  loginMode = !loginMode;
-  document.getElementById('formTitle').innerText = loginMode ? 'Login' : 'Sign Up';
-  authBtn.innerText = loginMode ? 'Login' : 'Sign Up';
+const app = express();
+const PORT = 3000;
+
+// ===== MIDDLEWARE =====
+app.use(cors());
+app.use(express.json());
+app.use(express.static(__dirname)); // serve HTML/CSS/JS files
+
+// ===== MONGODB CONNECTION =====
+const mongoURI = 'mongodb+srv://Brenda:18atlast@cluster0.l4i1nyh.mongodb.net/brendaAppDB?retryWrites=true&w=majority';
+
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('✅ MongoDB connected successfully!'))
+  .catch(err => console.error('❌ MongoDB connection error:', err));
+
+// ===== SCHEMAS =====
+const userSchema = new mongoose.Schema({
+  username: { type: String, unique: true, required: true },
+  password: { type: String, required: true }
 });
 
-// Handle authentication
-authBtn.addEventListener('click', async () => {
-  const username = document.getElementById('username').value.trim();
-  const password = document.getElementById('password').value.trim();
-  if (!username || !password) return;
+const messageSchema = new mongoose.Schema({
+  username: String,
+  message: String,
+  createdAt: { type: Date, default: Date.now }
+});
 
-  const res = await fetch(`/api/${loginMode ? 'login' : 'signup'}`, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({username, password})
-  });
+const User = mongoose.model('User', userSchema);
+const Message = mongoose.model('Message', messageSchema);
 
-  const data = await res.json();
-  if (data.success) {
-    currentUser = username;
-    authForms.style.display = 'none';
-    birthdayPage.style.display = 'block';
-    loadMessages();
-  } else {
-    document.getElementById('authStatus').innerText = data.error;
+// ===== ROUTES =====
+
+// Signup
+app.post('/api/signup', async (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) return res.json({ success: false, error: 'Username & password required' });
+
+  try {
+    const hashed = await bcrypt.hash(password, 10);
+    const newUser = new User({ username, password: hashed });
+    await newUser.save();
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.json({ success: false, error: 'Username already exists' });
   }
 });
 
-// Send a message
-document.getElementById('sendBtn').addEventListener('click', async () => {
-  const msgInput = document.getElementById('messageInput');
-  const msg = msgInput.value.trim();
-  if (!msg) return;
+// Login
+app.post('/api/login', async (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) return res.json({ success: false, error: 'Username & password required' });
 
-  await fetch('/api/messages', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({username: currentUser, message: msg})
-  });
+  const user = await User.findOne({ username });
+  if (!user) return res.json({ success: false, error: 'User not found' });
 
-  msgInput.value = '';
-  loadMessages();
+  const match = await bcrypt.compare(password, user.password);
+  if (!match) return res.json({ success: false, error: 'Incorrect password' });
+
+  res.json({ success: true });
 });
 
-// Load all messages
-async function loadMessages() {
-  const res = await fetch('/api/messages');
-  const msgs = await res.json();
-  const list = document.getElementById('messagesList');
-  list.innerHTML = '';
+// Post a message
+app.post('/api/messages', async (req, res) => {
+  const { username, message } = req.body;
+  if (!username || !message) return res.status(400).json({ success: false, error: 'Invalid data' });
 
-  msgs.forEach(m => {
-    const li = document.createElement('li');
-    li.textContent = `${m.username}: ${m.message}`;
-    list.appendChild(li);
-  });
-}
+  const newMsg = new Message({ username, message });
+  await newMsg.save();
+  res.json({ success: true });
+});
+
+// Get all messages
+app.get('/api/messages', async (req, res) => {
+  const msgs = await Message.find().sort({ createdAt: 1 });
+  res.json(msgs);
+});
+
+// ===== START SERVER =====
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
