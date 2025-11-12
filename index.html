@@ -7,44 +7,43 @@
 <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 <style>
 body {
-  margin: 0; padding:0;
-  font-family: 'Pacifico', cursive;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(-45deg,#ff9a9e,#fad0c4,#a18cd1,#fbc2eb);
-  background-size: 400% 400%;
-  animation: gradientBG 20s ease infinite;
+  margin:0; padding:0;
+  font-family:'Pacifico',cursive;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(-45deg,#ff9a9e,#fad0c4,#a18cd1,#fbc2eb);
+  background-size:400% 400%;
+  animation:gradientBG 20s ease infinite;
 }
 @keyframes gradientBG {
-  0% { background-position:0% 50%; }
-  25% { background-position:50% 100%; }
-  50% { background-position:100% 50%; }
-  75% { background-position:50% 0%; }
-  100% { background-position:0% 50%; }
+  0%{background-position:0% 50%;}
+  25%{background-position:50% 100%;}
+  50%{background-position:100% 50%;}
+  75%{background-position:50% 0%;}
+  100%{background-position:0% 50%;}
 }
-.container {
-  background-color: rgba(255,255,255,0.1);
+.container{
+  background-color:rgba(255,255,255,0.1);
   padding:30px 40px;
   border-radius:20px;
   text-align:center;
   max-width:600px;
   width:90%;
-  backdrop-filter: blur(10px);
+  backdrop-filter:blur(10px);
   color:#fff;
   box-shadow:0 10px 25px rgba(0,0,0,0.2);
 }
-input[type="text"], input[type="password"] {
+input[type="text"], input[type="password"]{
   width:100%;
   padding:12px;
   margin:10px 0;
   border-radius:12px;
   border:none;
   font-size:16px;
-  outline:none;
 }
-button {
+button{
   background-color:#ff69b4;
   color:#fff;
   border:none;
@@ -53,11 +52,10 @@ button {
   font-size:16px;
   cursor:pointer;
   margin:5px;
-  transition: transform 0.2s, background-color 0.2s;
 }
-button:hover { transform:scale(1.05); background-color:#ff85c1; }
-.status { margin-top:10px; min-height:24px; color:#fff; }
-.birthday-text {
+button:hover{transform:scale(1.05);}
+.status{margin-top:10px;min-height:24px;color:#fff;}
+.birthday-text{
   font-size:42px;
   display:flex;
   justify-content:center;
@@ -66,49 +64,37 @@ button:hover { transform:scale(1.05); background-color:#ff85c1; }
   margin-bottom:25px;
   flex-wrap:wrap;
 }
-.birthday-text span {
+.birthday-text span{
   display:inline-block;
   opacity:0;
-  animation: glowLetter 2s infinite alternate;
+  animation:glowLetter 2s infinite alternate;
   text-shadow:0 0 5px #fff;
 }
-.birthday-text span:nth-child(1){animation-delay:0s;}
-.birthday-text span:nth-child(2){animation-delay:0.1s;}
-.birthday-text span:nth-child(3){animation-delay:0.2s;}
-.birthday-text span:nth-child(4){animation-delay:0.3s;}
-.birthday-text span:nth-child(5){animation-delay:0.4s;}
-.birthday-text span:nth-child(6){animation-delay:0.5s;}
-.birthday-text span:nth-child(7){animation-delay:0.6s;}
-.birthday-text span:nth-child(8){animation-delay:0.7s;}
-.birthday-text span:nth-child(9){animation-delay:0.8s;}
-.birthday-text span:nth-child(10){animation-delay:0.9s;}
-.birthday-text span:nth-child(11){animation-delay:1s;}
-.birthday-text span:nth-child(12){animation-delay:1.1s;}
-.birthday-text span:nth-child(13){animation-delay:1.2s;}
-.birthday-text span:nth-child(14){animation-delay:1.3s;}
-.birthday-text span:nth-child(15){animation-delay:1.4s;}
-.birthday-text span:nth-child(16){animation-delay:1.5s;}
-.birthday-text span:nth-child(17){animation-delay:1.6s;}
-.birthday-text span:nth-child(18){animation-delay:1.7s;}
-.birthday-text span:nth-child(19){animation-delay:1.8s;}
-.birthday-text span:nth-child(20){animation-delay:1.9s;}
-.birthday-text span:nth-child(21){animation-delay:2s;}
-.birthday-text span:nth-child(22){animation-delay:2.1s;}
-.birthday-text span:nth-child(23){animation-delay:2.2s;}
-@keyframes glowLetter {
-  0% { opacity:0;color:#fff; }
-  50% { opacity:1;color:#ff9a9e;text-shadow:0 0 10px #ff9a9e,0 0 20px #fad0c4;}
-  100% { opacity:1;color:#fad0c4;text-shadow:0 0 15px #ff9a9e,0 0 25px #fad0c4;}
+.balloon{font-size:42px;animation:balloonFloat 3s infinite alternate;}
+@keyframes balloonFloat{
+  0%{transform:translateY(0);}
+  50%{transform:translateY(-10px);}
+  100%{transform:translateY(0);}
 }
-.balloon { font-size:42px; animation: balloonFloat 3s infinite alternate; }
-@keyframes balloonFloat {
-  0% { transform:translateY(0);}
-  50% { transform:translateY(-10px);}
-  100% { transform:translateY(0);}
+@keyframes glowLetter{
+  0%{opacity:0;color:#fff;}
+  50%{opacity:1;color:#ff9a9e;text-shadow:0 0 10px #ff9a9e,0 0 20px #fad0c4;}
+  100%{opacity:1;color:#fad0c4;text-shadow:0 0 15px #ff9a9e,0 0 25px #fad0c4;}
 }
-#messagesList { list-style:none; padding:0; max-height:150px; overflow-y:auto; margin-top:15px; }
-#messagesList li { background: rgba(255,255,255,0.2); padding:8px 12px; margin-bottom:8px; border-radius:12px; text-align:left; }
-#messageInput { margin-bottom:10px; }
+#messagesList{
+  list-style:none;
+  padding:0;
+  max-height:150px;
+  overflow-y:auto;
+  margin-top:15px;
+}
+#messagesList li{
+  background: rgba(255,255,255,0.2);
+  padding:8px 12px;
+  margin-bottom:8px;
+  border-radius:12px;
+  text-align:left;
+}
 </style>
 </head>
 <body>
@@ -151,93 +137,90 @@ const authForms = document.getElementById('authForms');
 const birthdayPage = document.getElementById('birthdayPage');
 const authBtn = document.getElementById('authBtn');
 const toggleLink = document.getElementById('toggleLink');
+const authStatus = document.getElementById('authStatus');
 let loginMode = true;
 
-// Toggle login/signup form
 toggleLink.addEventListener('click', () => {
   loginMode = !loginMode;
   document.getElementById('formTitle').innerText = loginMode ? 'Login' : 'Sign Up';
   authBtn.innerText = loginMode ? 'Login' : 'Sign Up';
-  document.getElementById('authStatus').innerText = '';
+  authStatus.innerText = '';
 });
 
-// Login / Sign-up
 authBtn.addEventListener('click', async () => {
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value.trim();
-  if (!username || !password) return showAuthStatus('Username & password required!');
+  if (!username || !password) {
+    authStatus.innerText = 'Please enter username and password';
+    return;
+  }
 
   const endpoint = loginMode ? '/api/login' : '/api/signup';
   try {
     const res = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({username,password})
     });
     const data = await res.json();
+
     if (data.success) {
       currentUser = username;
-      document.getElementById('username').value = '';
-      document.getElementById('password').value = '';
       authForms.style.display = 'none';
       birthdayPage.style.display = 'block';
+      authStatus.innerText = '';
       loadMessages();
-      setInterval(loadMessages, 5000); // auto-refresh
     } else {
-      showAuthStatus(data.error || 'Something went wrong!');
+      authStatus.innerText = data.error || 'Server error';
     }
-  } catch (err) {
-    showAuthStatus('Server error. Try again.');
+  } catch(err) {
+    authStatus.innerText = 'Network error';
     console.error(err);
   }
 });
 
-// Send message
 document.getElementById('sendBtn').addEventListener('click', async () => {
   const msgInput = document.getElementById('messageInput');
   const msg = msgInput.value.trim();
   if (!msg) return;
 
   try {
-    await fetch('/api/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: currentUser, message: msg })
+    const res = await fetch('/api/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({username: currentUser, message: msg})
     });
-    msgInput.value = '';
-    loadMessages();
-  } catch (err) {
+    const data = await res.json();
+    if (data.success) {
+      msgInput.value='';
+      loadMessages();
+    } else {
+      document.getElementById('status').innerText = data.error;
+    }
+  } catch(err) {
+    document.getElementById('status').innerText = 'Network error';
     console.error(err);
   }
 });
 
-// Surprise gift
 document.getElementById('giftBtn').addEventListener('click', () => {
   alert('🎁 Surprise! Brenda loves you!');
 });
 
-// Load messages
-async function loadMessages() {
+async function loadMessages(){
   try {
     const res = await fetch('/api/messages');
     const msgs = await res.json();
     const list = document.getElementById('messagesList');
-    list.innerHTML = '';
+    list.innerHTML='';
     msgs.forEach(m => {
       const li = document.createElement('li');
       li.textContent = `${m.username}: ${m.message}`;
       list.appendChild(li);
     });
-  } catch (err) {
-    console.error(err);
+  } catch(err) {
+    console.error('Load messages error:', err);
   }
-}
-
-// Auth status helper
-function showAuthStatus(msg) {
-  const status = document.getElementById('authStatus');
-  status.innerText = msg;
-  setTimeout(() => { status.innerText = ''; }, 3000);
 }
 </script>
 </body>
