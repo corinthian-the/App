@@ -1,24 +1,28 @@
-// ===== IMPORTS =====
+// server.js
 const express = require('express');
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 const cors = require('cors');
 const path = require('path');
 
-// ===== APP SETUP =====
 const app = express();
-app.use(express.json());
+const PORT = 3000;
+
+// ===== MIDDLEWARE =====
 app.use(cors());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
+app.use(express.static(__dirname)); // Serve index.html, style.css, script.js
 
 // ===== MONGODB CONNECTION =====
-mongoose.connect('mongodb+srv://<YOUR_USERNAME>:<YOUR_PASSWORD>@cluster0.l4i1nyh.mongodb.net/brendaApp?retryWrites=true&w=majority')
+const mongoURI = 'mongodb+srv://Brenda:18atlast@cluster0.l4i1nyh.mongodb.net/brendaAppDB?retryWrites=true&w=majority';
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('✅ MongoDB connected successfully!'))
   .catch(err => console.error('❌ MongoDB connection error:', err));
 
 // ===== SCHEMAS =====
 const userSchema = new mongoose.Schema({
-  username: { type: String, unique: true },
-  password: String
+  username: { type: String, unique: true, required: true },
+  password: { type: String, required: true }
 });
 
 const messageSchema = new mongoose.Schema({
@@ -32,59 +36,67 @@ const Message = mongoose.model('Message', messageSchema);
 
 // ===== ROUTES =====
 
-// --- Sign Up ---
+// Sign Up
 app.post('/api/signup', async (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) return res.json({ success: false, error: 'Username & password required' });
+
   try {
-    const { username, password } = req.body;
     const existingUser = await User.findOne({ username });
     if (existingUser) return res.json({ success: false, error: 'Username already exists' });
 
-    await User.create({ username, password });
+    const hashed = await bcrypt.hash(password, 10);
+    await User.create({ username, password: hashed });
     res.json({ success: true });
   } catch (err) {
-    console.error('Signup error:', err);
-    res.status(500).json({ success: false, error: 'Server error during signup' });
+    console.error(err);
+    res.json({ success: false, error: 'Server error during signup' });
   }
 });
 
-// --- Login ---
+// Login
 app.post('/api/login', async (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) return res.json({ success: false, error: 'Username & password required' });
+
   try {
-    const { username, password } = req.body;
-    const user = await User.findOne({ username, password });
-    if (!user) return res.json({ success: false, error: 'Invalid credentials' });
+    const user = await User.findOne({ username });
+    if (!user) return res.json({ success: false, error: 'User not found' });
+
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.json({ success: false, error: 'Incorrect password' });
 
     res.json({ success: true });
   } catch (err) {
-    console.error('Login error:', err);
-    res.status(500).json({ success: false, error: 'Server error during login' });
+    console.error(err);
+    res.json({ success: false, error: 'Server error during login' });
   }
 });
 
-// --- Post Message ---
+// Post a message
 app.post('/api/messages', async (req, res) => {
+  const { username, message } = req.body;
+  if (!username || !message) return res.status(400).json({ success: false, error: 'Invalid data' });
+
   try {
-    const { username, message } = req.body;
-    const newMsg = new Message({ username, message });
-    await newMsg.save();
+    await Message.create({ username, message });
     res.json({ success: true });
   } catch (err) {
-    console.error('Message error:', err);
+    console.error(err);
     res.status(500).json({ success: false, error: 'Error saving message' });
   }
 });
 
-// --- Get Messages ---
+// Get all messages
 app.get('/api/messages', async (req, res) => {
   try {
-    const msgs = await Message.find().sort({ createdAt: -1 }).limit(20);
+    const msgs = await Message.find().sort({ createdAt: 1 });
     res.json(msgs);
   } catch (err) {
-    console.error('Fetch messages error:', err);
+    console.error(err);
     res.status(500).json({ success: false, error: 'Error fetching messages' });
   }
 });
 
 // ===== START SERVER =====
-const PORT = 3000;
-app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
